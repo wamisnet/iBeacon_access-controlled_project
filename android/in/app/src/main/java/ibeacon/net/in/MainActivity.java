@@ -12,15 +12,24 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
 
+
 public class MainActivity extends Fragment {
     BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     IBeaconAdvertiseCallback mAdvertiseCallback;
     private final String TAG = "mainActivity";
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment1, container, false);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +55,7 @@ public class MainActivity extends Fragment {
         final boolean isAdvertiseSupported = mBluetoothLeAdvertiser != null;
         // Advertiseサポートチェック
         if(!isAdvertiseSupported){
-            // Advertise非サポート時の処理をしてください
+            Log.d(TAG, "errorMessage Bluetooth Low Enerey Advertise非サポート時の処理をしてください");
             return;
         }
         // 以下はAdvertiseSettings
