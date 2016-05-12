@@ -1,5 +1,9 @@
 package com.example.ogi.myapplication;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.Activity;
@@ -28,7 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 public class MainActivity extends AppCompatActivity {
-
+    BluetoothAdapter mBluetoothAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
         // ボタンのオブジェクトを取得
         Button btn = (Button) findViewById(R.id.button);
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+    mBluetoothAdapter= bluetoothManager.getAdapter();
+        mBluetoothAdapter.startLeScan(mLeScanCallback);
 
         try{
             InputStream in = openFileInput("a.txt");
@@ -69,9 +77,17 @@ public class MainActivity extends AppCompatActivity {
                 }catch(IOException e){
                     e.printStackTrace();
                 }
+
             }
         });
     }
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            // デバイスが検出される度に呼び出されます。
+            Log.v("onCreate", String.valueOf(scanRecord));
+        }
+    };
 }
 //文字を送る
 //ビーコンの判別
