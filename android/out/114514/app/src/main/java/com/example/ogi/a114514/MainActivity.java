@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
         public void onLeScan(final BluetoothDevice device, int rssi,byte[] scanRecord) {
             Log.d(TAG, "receive!!!");
             getScanData(scanRecord);
-            Log.d(TAG, "device name:"+device.getName() );
+            /*Log.d(TAG, "device name:"+device.getName() );*/
             Log.d(TAG, "device address:"+device.getAddress() );
         }
 

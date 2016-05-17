@@ -57,4 +57,13 @@
         android:layout_toEndOf="@+id/textView"
         style="?android:attr/progressBarStyle"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan"
+        android:id="@+id/button2"
+        android:layout_below="@+id/textView"
+        android:layout_alignEnd="@+id/button"
+        android:layout_alignParentEnd="false" />
+
 </RelativeLayout>
