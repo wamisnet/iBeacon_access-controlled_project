@@ -1,71 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.ogi.myapplication.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status:"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
+        android:text="学籍番号"
+        android:id="@+id/textView2"
+        android:textSize="30dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:id="@+id/textView"/>
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/EditText"
+        android:maxWidth="50dp"
+
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp"
+        android:layout_alignParentEnd="true"
+        android:hint="学籍番号を入力してくださいなんでもしますから" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="保存"
+        android:id="@+id/button"
+        android:layout_below="@+id/EditText"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView2" />
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="disconnected"
-        android:id="@+id/text_status"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_marginLeft="10dp"/>
+        android:layout_height="30dp"
+        android:text="iBeaconStatus"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/button"
+        android:textSize="25dp" />
 
-    <Button
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect"
-        android:id="@+id/btn_connect"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/textView"
-        android:layout_alignLeft="@id/textView"/>
+        android:id="@+id/progressBar"
+        android:layout_alignTop="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        style="?android:attr/progressBarStyle"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Disconnect"
-        android:id="@+id/btn_disconnect"
-        android:layout_alignTop="@+id/btn_connect"
-        android:layout_toRightOf="@id/btn_connect"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_connect"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="46dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="LEFT"
-            android:id="@+id/left"
-            android:layout_gravity="center"
-            android:padding="20dp"/>
-
-        <View android:layout_width="60dp"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="RIGHT"
-            android:id="@+id/right"
-            android:layout_gravity="center"
-            android:padding="20dp"/>
-    </LinearLayout>
 </RelativeLayout>
