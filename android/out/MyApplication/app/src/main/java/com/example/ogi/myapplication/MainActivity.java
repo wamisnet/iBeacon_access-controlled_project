@@ -42,12 +42,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // ボタンのオブジェクトを取得
-        Button btn = (Button) findViewById(R.id.button);
-        Button btn2 = (Button) findViewById(R.id.button2);
+        Button save_btn = (Button) findViewById(R.id.savebutton);
+        Button scan_btn = (Button) findViewById(R.id.scanbutton);
+
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-        btn2.setOnClickListener(new OnClickListener() {
+
+
+        try {
+            InputStream in = openFileInput("user.txt");
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String gakuseki;
+            EditText et = (EditText) findViewById(R.id.EditText);
+            while ((gakuseki = reader.readLine()) != null) {
+                et.append(gakuseki);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -62,27 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             }
         });
-        /*mBluetoothAdapter= bluetoothManager.getAdapter();
-        mBluetoothAdapter= bluetoothManager.getAdapter();
-        mBluetoothAdapter.startLeScan(mLeScanCallback);*/
-
-        try {
-            InputStream in = openFileInput("a.txt");
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String gakuseki;
-            EditText et = (EditText) findViewById(R.id.EditText);
-            while ((gakuseki = reader.readLine()) != null) {
-                et.append(gakuseki);
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         // クリックイベントを受け取れるようにする
-        btn.setOnClickListener(new OnClickListener() {
+        save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドがクリック毎に呼び出される
             public void onClick(View v) {
                 // ここにクリックされたときの処理を記述
@@ -91,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("onCreate", gakuseki);
 
                 try {
-                    OutputStream out = openFileOutput("a.txt", MODE_PRIVATE);
+                    OutputStream out = openFileOutput("user.txt", MODE_PRIVATE);
                     PrintWriter writer =
                             new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
                     writer.append(gakuseki);
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-String TAG ="TAG";
+    String TAG ="TAG";
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {

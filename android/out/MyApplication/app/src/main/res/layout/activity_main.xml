@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="保存"
-        android:id="@+id/button"
+        android:id="@+id/savebutton"
         android:layout_below="@+id/EditText"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/textView2" />
@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan"
-        android:id="@+id/button2"
+        android:id="@+id/scanbutton"
         android:layout_below="@+id/textView"
         android:layout_alignEnd="@+id/button"
         android:layout_alignParentEnd="false" />
