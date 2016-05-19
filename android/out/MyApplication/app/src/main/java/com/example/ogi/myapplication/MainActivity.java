@@ -32,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // タイムアウチE
-                        Log.d("Oncreate", "タイムアウチE);
+                        Log.d("Oncreate", "タイムアウト");
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
                 }, 10000);
@@ -69,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             }
         });
-        // クリチE��イベントを受け取れるよぁE��する
+        // クリックイベントを受け取れるようにする
         save_btn.setOnClickListener(new OnClickListener() {
             // こ�EメソチE��がクリチE��毎に呼び出されめE
             public void onClick(View v) {
-                // ここにクリチE��されたとき�E処琁E��記述
+                // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
-                FileWrite("user.txt","user" ,edit.getText());
+                FileWrite("user.txt","user" ,edit.getText().toString());
             }
         });
     }
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    private void FileWrite(const char* filename,const char* id,const char* data){
+    private void FileWrite(String filename,String id,String data){
         try {
             OutputStream out = openFileOutput(filename, MODE_PRIVATE);
             PrintWriter writer =
@@ -146,23 +148,26 @@ public class MainActivity extends AppCompatActivity {
 
         return strTmp;
     }
-    private String FileRead(const char* filename,const char* id){
-        try {
+    private String FileRead(String filename,String id){
+        try {Log.v("fileread","テスト1");
             InputStream in = openFileInput(filename);
             BufferedReader reader =
                     new BufferedReader(new InputStreamReader(in, "UTF-8"));
             String search;
             while ((search = reader.readLine()) != null) {
-                if(search,equals(id+":")){
+                if(search.startsWith(id)){
+                    Log.v("fileread",search);
                     reader.close();
                     return removeString(search,id+":");
                 }
+                Log.v("fileread","テスト２");
             }
             reader.close();
-            return null;
+            return "";
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return "";
     }
 }
 //送信
