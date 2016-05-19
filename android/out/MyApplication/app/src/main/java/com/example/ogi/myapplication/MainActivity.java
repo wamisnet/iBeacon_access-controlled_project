@@ -1,5 +1,6 @@
 package com.example.ogi.myapplication;
 
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -49,55 +50,32 @@ public class MainActivity extends AppCompatActivity {
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
 
+        EditText et = (EditText) findViewById(R.id.EditText);
+        et.append(FileRead("user.txt","user"));
 
-        try {
-            InputStream in = openFileInput("user.txt");
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String gakuseki;
-            EditText et = (EditText) findViewById(R.id.EditText);
-            while ((gakuseki = reader.readLine()) != null) {
-                et.append(gakuseki);
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // タイムアウト
-                        Log.d("Oncreate", "タイムアウト");
+                        // タイムアウチE
+                        Log.d("Oncreate", "タイムアウチE);
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
                 }, 10000);
 
-                // スキャン開始
+                // スキャン開姁E
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             }
         });
-        // クリックイベントを受け取れるようにする
+        // クリチE��イベントを受け取れるよぁE��する
         save_btn.setOnClickListener(new OnClickListener() {
-            // このメソッドがクリック毎に呼び出される
+            // こ�EメソチE��がクリチE��毎に呼び出されめE
             public void onClick(View v) {
-                // ここにクリックされたときの処理を記述
+                // ここにクリチE��されたとき�E処琁E��記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
-                String gakuseki = edit.getText().toString();
-                Log.v("onCreate", gakuseki);
-
-                try {
-                    OutputStream out = openFileOutput("user.txt", MODE_PRIVATE);
-                    PrintWriter writer =
-                            new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-                    writer.append(gakuseki);
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                FileWrite("user.txt","user" ,edit.getText());
             }
         });
     }
@@ -146,6 +124,44 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "major:" + major);
                 Log.d(TAG, "minor:" + minor);
             }
+        }
+    }
+    
+    private void FileWrite(const char* filename,const char* id,const char* data){
+        try {
+            OutputStream out = openFileOutput(filename, MODE_PRIVATE);
+            PrintWriter writer =
+                    new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.append(id+":"+data+"\n");
+            writer.close();
+            Log.d("FileWrite:","ID:"+id+"data:"+data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public String removeString(String strSrc, String strRemove) {
+        Pattern pattern = Pattern.compile(strRemove);
+        Matcher matcher = pattern.matcher(strSrc);
+        String strTmp = matcher.replaceAll("");
+
+        return strTmp;
+    }
+    private String FileRead(const char* filename,const char* id){
+        try {
+            InputStream in = openFileInput(filename);
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String search;
+            while ((search = reader.readLine()) != null) {
+                if(search,equals(id+":")){
+                    reader.close();
+                    return removeString(search,id+":");
+                }
+            }
+            reader.close();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
