@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // タイムアウチE
+                        // タイムアウト
                         Log.d("Oncreate", "タイムアウト");
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
                 }, 10000);
 
-                // スキャン開姁E
+                // スキャン開始
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             }
         });
