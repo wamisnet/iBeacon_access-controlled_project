@@ -25,6 +25,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.nifty.cloud.mb.core.DoneCallback;
+import com.nifty.cloud.mb.core.NCMB;
+import com.nifty.cloud.mb.core.NCMBException;
+import com.nifty.cloud.mb.core.NCMBObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
+                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+
 
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
@@ -82,13 +91,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     String TAG ="TAG";
+    Timer timer;
+    int sec;
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+
+            
             Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
             /*Log.d("TAG", "device name:" + device.getName());*/
             Log.d("TAG", "device address:" + device.getAddress());
+
         }
 
     };
@@ -123,6 +137,22 @@ public class MainActivity extends AppCompatActivity {
                 String minor = Integer.toHexString(scanRecord[27] & 0xff) + Integer.toHexString(scanRecord[28] & 0xff);
 
                 Log.d(TAG, "UUID:" + uuid);
+                if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
+                {
+                    NCMBObject obj = new NCMBObject("TestClass");
+                    obj.put("message", "Hello, NCMB!");
+                    obj.saveInBackground(new DoneCallback() {
+                        @Override
+                        public void done(NCMBException e) {
+                            if(e != null){
+                                //保存失敗
+                            }else {
+                                //保存成功
+                            }
+                        }
+                    });
+
+                }
                 Log.d(TAG, "major:" + major);
                 Log.d(TAG, "minor:" + minor);
             }
