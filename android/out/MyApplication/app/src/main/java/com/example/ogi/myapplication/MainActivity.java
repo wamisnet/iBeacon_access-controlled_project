@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     if(flag==0) {
                         NCMBObject obj = new NCMBObject("TestClass");
-                        obj.put("message", "Hello, NCMB!");
+                        obj.put("attend",FileRead("user.txt","user"));
                         obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
