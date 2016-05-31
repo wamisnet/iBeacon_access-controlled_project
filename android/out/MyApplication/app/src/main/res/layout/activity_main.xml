@@ -46,7 +46,6 @@
         android:id="@+id/textView"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/button"
         android:textSize="25dp" />
 
     <ProgressBar
@@ -63,7 +62,6 @@
         android:text="Scan"
         android:id="@+id/scanbutton"
         android:layout_below="@+id/textView"
-        android:layout_alignEnd="@+id/button"
         android:layout_alignParentEnd="false" />
 
 </RelativeLayout>

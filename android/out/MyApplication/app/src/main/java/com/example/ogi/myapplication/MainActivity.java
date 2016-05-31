@@ -23,6 +23,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
     Handler mHandler = new Handler();
     int flag=0;
+    ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
                 "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
 
         // ボタンのオブジェクトを取得
@@ -70,9 +76,11 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         // タイムアウト
                         Log.d("Oncreate", "タイムアウト");
+                        progressBar.setVisibility(View.GONE);
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
                 }, 10000);
+
 
                 // スキャン開始
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
@@ -93,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            progressBar.setVisibility(View.VISIBLE);
             Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
             /*Log.d("TAG", "device name:" + device.getName());*/
             Log.d("TAG", "device address:" + device.getAddress());
-
         }
 
     };
