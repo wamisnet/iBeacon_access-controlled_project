@@ -53,14 +53,15 @@
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignStart="@+id/savebutton"
+        android:layout_marginStart="36dp" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
         android:text="Scan"
         android:id="@+id/scanbutton"
-        android:layout_alignTop="@+id/progressBar"
+        android:layout_alignBottom="@+id/progressBar"
         android:layout_alignParentStart="true" />
 
 </RelativeLayout>
