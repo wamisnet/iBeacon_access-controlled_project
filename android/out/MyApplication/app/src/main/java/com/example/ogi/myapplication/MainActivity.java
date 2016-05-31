@@ -64,7 +64,13 @@ public class MainActivity extends AppCompatActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-
+        if(mBluetoothAdapter!= null) {
+            if (mBluetoothAdapter.isEnabled()) {
+                Toast toast = Toast.makeText(this, "Bluetooth ON!", Toast.LENGTH_LONG);
+                toast.show();
+                mBluetoothAdapter.enable();
+            }
+        }
         EditText et = (EditText) findViewById(R.id.EditText);
         et.append(FileRead("user.txt","user"));
 
