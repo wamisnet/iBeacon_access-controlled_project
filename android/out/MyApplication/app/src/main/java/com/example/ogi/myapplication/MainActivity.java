@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     String TAG ="TAG";
-    Timer timer;
-    int sec;
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
