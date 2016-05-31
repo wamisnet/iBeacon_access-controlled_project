@@ -137,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
+                        Toast toast = Toast.makeText(this, "同一のUUIDを検知しました。", Toast.LENGTH_LONG);
+                        toast.show();
+                        
                         NCMBObject obj = new NCMBObject("TestClass");
                         obj.put("attend",FileRead("user.txt","user"));
                         obj.saveInBackground(new DoneCallback() {
