@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         if(mBluetoothAdapter!= null) {
-            if (mBluetoothAdapter.isEnabled()) {
+            Log.i("TAG", "BL1");
+            if (!mBluetoothAdapter.isEnabled()) {
+                Log.i("TAG", "BL2");
                 Toast toast = Toast.makeText(this, "Bluetooth ON!", Toast.LENGTH_LONG);
                 toast.show();
                 mBluetoothAdapter.enable();
