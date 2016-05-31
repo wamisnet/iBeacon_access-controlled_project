@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="学籍番号"
+        android:text="出席管理program"
         android:id="@+id/textView2"
         android:textSize="30dp"
         android:layout_alignParentTop="true"
@@ -31,37 +31,36 @@
         android:hint="学籍番号を入力してください" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
         android:text="保存"
         android:id="@+id/savebutton"
         android:layout_below="@+id/EditText"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/textView2" />
+        android:layout_alignEnd="@+id/EditText" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
         android:text="iBeaconStatus"
         android:id="@+id/textView"
+        android:textSize="45dp"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:textSize="25dp" />
+        android:layout_alignParentStart="true" />
 
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
-        android:layout_alignTop="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
-        style="?android:attr/progressBarStyle"/>
+        style="?android:attr/progressBarStyle"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan"
         android:id="@+id/scanbutton"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentEnd="false" />
+        android:layout_alignTop="@+id/progressBar"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
