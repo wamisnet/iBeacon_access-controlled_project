@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
                 "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        assert progressBar != null;
         progressBar.setVisibility(View.GONE);
 
 
@@ -74,9 +75,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         EditText et = (EditText) findViewById(R.id.EditText);
+        assert et != null;
         et.append(FileRead("user.txt","user"));
 
 
+        assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 mHandler.postDelayed(new Runnable() {
@@ -97,11 +100,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // クリックイベントを受け取れるようにする
+        assert save_btn != null;
         save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
+                assert edit != null;
                 FileWrite("user.txt","user" ,edit.getText().toString());
             }
         });
@@ -177,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     private void FileWrite(String filename,String id,String data){
         try {
             OutputStream out = openFileOutput(filename, MODE_PRIVATE);
