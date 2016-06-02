@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // スキャン開始
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
+                progressBar.setVisibility(View.VISIBLE);
                 flag=0;
             }
         });
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-            progressBar.setVisibility(View.VISIBLE);
+           // progressBar.setVisibility(View.VISIBLE);
             Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
             /*Log.d("TAG", "device name:" + device.getName());*/

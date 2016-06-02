@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">iBeacon_receiver</string>
+    <string name="title">出席管理program</string>
+    <string name="gakuseki">学籍番号を入力してください</string>
+    <string name="ibeaconstatus">iBeaconStatus</string>
+    <string name="Scan">Scan</string>
+    <string name="hozon">保存</string>
 </resources>
