@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         + Integer.toHexString(scanRecord[22] & 0xff)
                         + Integer.toHexString(scanRecord[23] & 0xff)
                         + Integer.toHexString(scanRecord[24] & 0xff);
-
+                //１６進数
                 String major = Integer.toHexString(scanRecord[25] & 0xff) + Integer.toHexString(scanRecord[26] & 0xff);
                 String minor = Integer.toHexString(scanRecord[27] & 0xff) + Integer.toHexString(scanRecord[28] & 0xff);
 
@@ -157,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
                         //サーバへ送信
                         NCMBObject obj = new NCMBObject("TestClass");
                         obj.put("attend",FileRead("user.txt","user"));
-                        obj.put("major","major:" + major);
-                        obj.put("minor","minor:" + minor);
+                        obj.put("major", major);
+                        obj.put("minor", minor);
                         obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
