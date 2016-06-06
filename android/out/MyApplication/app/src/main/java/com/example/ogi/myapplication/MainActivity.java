@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity {
                         + Integer.toHexString(scanRecord[22] & 0xff)
                         + Integer.toHexString(scanRecord[23] & 0xff)
                         + Integer.toHexString(scanRecord[24] & 0xff);
-                //１６進数
-                String major = Integer.toHexString(scanRecord[25] & 0xff) + Integer.toHexString(scanRecord[26] & 0xff);
-                String minor = Integer.toHexString(scanRecord[27] & 0xff) + Integer.toHexString(scanRecord[28] & 0xff);
+                //１0進数
+                int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
+                int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
                 Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
