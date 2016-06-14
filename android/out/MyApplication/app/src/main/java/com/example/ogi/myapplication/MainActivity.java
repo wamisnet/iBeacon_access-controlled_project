@@ -4,28 +4,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.app.Activity;
-import android.os.Bundle;
 import android.widget.EditText;
-import android.text.SpannableStringBuilder;
-import android.app.Activity;
-import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
@@ -37,7 +26,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,20 +36,20 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
 
     @Override
+    //Create
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Mbaasを使用する為のAPIとキー↓
         NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
                 "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         assert progressBar != null;
         progressBar.setVisibility(View.GONE);
-
-
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
-
+        //ブルートゥースサービスを開始させる
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -77,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
         et.append(FileRead("user.txt","user"));
-
 
         assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
@@ -104,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
         save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
+                //スタートサービス
+                Context w = null;
+                MyAlarmManager a = new MyAlarmManager(getApplicationContext());
+                a.addAlarm(12,02);
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
@@ -115,15 +106,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-           // progressBar.setVisibility(View.VISIBLE);
             Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
-            /*Log.d("TAG", "device name:" + device.getName());*/
             Log.d("TAG", "device address:" + device.getAddress());
         }
-
     };
-
 
     private void getScanData(byte[] scanRecord) {
         if (scanRecord.length > 30) {
@@ -164,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                         obj.put("attend",FileRead("user.txt","user"));
                         obj.put("major", major);
                         obj.put("minor", minor);
+
                         obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
