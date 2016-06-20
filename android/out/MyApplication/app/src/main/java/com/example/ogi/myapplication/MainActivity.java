@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,15 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler = new Handler();
     int flag=0;
     ProgressBar progressBar;
+    //int StartHour[] = {9,10,13,14,24};
+    int StartHour[] = {11,11,11,11,11};
+    //int StartTime[] = {15,55,15,55,00};
+    int StartTime[] = {15,55,15,55,00};
+    int stopHour[] = {9,11,13,15,24};
+    int stopTime[] = {21,1,21,1,00};
+    int adtimerhour;
+    int adtimertime;
+    int x;
 
     @Override
     //Create
@@ -92,9 +102,33 @@ public class MainActivity extends AppCompatActivity {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
                 //スタートサービス
+
+                Calendar now = Calendar.getInstance(); //インスタンス化
+
+                int h = now.get(now.HOUR_OF_DAY);//時を取得
+                int m = now.get(now.MINUTE);     //分を取得
+                int s = now.get(now.SECOND);      //秒を取得
                 Context w = null;
                 MyAlarmManager a = new MyAlarmManager(getApplicationContext());
-                a.addAlarm(12,02);
+                for(x=0 ; x<5 ; x++)
+                {
+                 if(h <= StartHour[x])
+                 {
+                     adtimerhour = StartHour[x];
+                     break;
+                 }
+
+                }
+                /*for(int y = 0 ; y < 5 ; y++)
+                {
+                    if(m < StartTime[y])
+                    {
+                        adtimertime = StartTime[y];
+                        break;
+                    }
+                }*/
+                a.addAlarm(adtimerhour,StartTime[x]);
+
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
