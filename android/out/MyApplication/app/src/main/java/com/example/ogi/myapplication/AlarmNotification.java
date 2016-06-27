@@ -40,6 +40,7 @@ public class AlarmNotification extends Activity {
         if (mp == null)
             // resのrawディレクトリにtest.mp3を置いてある
             mp = MediaPlayer.create(this, R.raw.test);
+
         mp.start();
     }
 

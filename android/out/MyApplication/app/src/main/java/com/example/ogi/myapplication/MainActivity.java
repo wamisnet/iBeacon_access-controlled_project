@@ -36,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
     int flag=0;
     ProgressBar progressBar;
     //int StartHour[] = {9,10,13,14,24};
-    int StartHour[] = {11,11,11,11,11};
+    int StartHour[] = {10,11,11,11,11};
     //int StartTime[] = {15,55,15,55,00};
-    int StartTime[] = {15,55,15,55,00};
+    int StartTime[] = {20,55,15,55,00};
     int stopHour[] = {9,11,13,15,24};
     int stopTime[] = {21,1,21,1,00};
     int adtimerhour;
@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     int x;
 
     @Override
-    //Create
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -127,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }*/
-                a.addAlarm(adtimerhour,StartTime[x]);
+                adtimertime = StartTime[x];
+                a.addAlarm(adtimerhour,adtimertime);
 
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
@@ -205,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void FileWrite(String filename,String id,String data){
+
+   public void FileWrite(String filename, String id, String data){
         try {
             OutputStream out = openFileOutput(filename, MODE_PRIVATE);
             PrintWriter writer =
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
         return strTmp;
     }
-    private String FileRead(String filename,String id){
+    public String FileRead(String filename,String id){
         try {Log.v("fileread","テスト1");
             InputStream in = openFileInput(filename);
             BufferedReader reader =
