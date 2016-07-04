@@ -9,10 +9,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_l"
         android:label="@string/app_name"
         android:supportsRtl="true"
 
@@ -21,10 +23,24 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="jp.co.taosoftware.android.calendar.action.ICON_CHNAGE" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name="AlarmReceiver" >
+            <intent-filter>
+                <action android:name="MyAlarmAction"></action>
+            </intent-filter>
+        </receiver>
+        <service android:name="MyAlarmService" ></service>
+        <activity android:name="AlarmNotification" ></activity>
+        <intent-filter>
+           <!-- <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+            <action android:name="android.intent.action.ACTION_HEADSET_PLUG" />
+            <!--<action android:name="android.intent.action.AIRPLANE_MODE_CHANGED" />-->
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      <!--  <service android:name="MyAlarmNotification"/>-->
+        <service android:name="MyAlarmService"/>
     </application>
-    <!--android:name="com.nifty.cloud.mb.core.NCMBApplicationController"-->
 </manifest>
