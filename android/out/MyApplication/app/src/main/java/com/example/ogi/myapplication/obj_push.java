@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMBException;
@@ -20,15 +18,18 @@ public class obj_push {
     BluetoothAdapter mBluetoothAdapter;
     Handler mHandler = new Handler();
     int flag=0;
-    Context context;
+    private Context context;
     MainActivity f =new MainActivity();
-    public obj_push(Context context) {
+    /*public obj_push() {
         this.context = context;
-    }
+    }*/
+    public void onCreate(){
+        Log.i(TAG, "onCreate");
+    };
 
     public void ble(){
         BluetoothManager bluetoothManager =
-                (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+                (BluetoothManager) f.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -50,7 +51,7 @@ public class obj_push {
             Log.d("TAG", "device address:" + device.getAddress());
         }
     };
-    
+
     String TAG ="TAG";
 
     private void getScanData(byte[] scanRecord) {

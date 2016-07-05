@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler = new Handler();
     int flag=0;
     ProgressBar progressBar;
-    //int StartHour[] = {9,10,13,14,24};
-    int StartHour[] = {10,11,11,11,11};
+    //int StartHour[] = {9,10,13,14,0};
+    int StartHour;
     //int StartTime[] = {15,55,15,55,00};
-    int StartTime[] = {20,55,15,55,00};
+    int StartTime;
     int stopHour[] = {9,11,13,15,24};
     int stopTime[] = {21,1,21,1,00};
     int adtimerhour;
@@ -103,30 +103,38 @@ public class MainActivity extends AppCompatActivity {
                 //スタートサービス
 
                 Calendar now = Calendar.getInstance(); //インスタンス化
-
                 int h = now.get(now.HOUR_OF_DAY);//時を取得
                 int m = now.get(now.MINUTE);     //分を取得
                 int s = now.get(now.SECOND);      //秒を取得
                 Context w = null;
                 MyAlarmManager a = new MyAlarmManager(getApplicationContext());
-                for(x=0 ; x<5 ; x++)
+                /*for(x=0 ; x<5 ; x++)//purpose
                 {
-                 if(h <= StartHour[x])
-                 {
-                     adtimerhour = StartHour[x];
-                     break;
-                 }
-
-                }
-                /*for(int y = 0 ; y < 5 ; y++)
-                {
-                    if(m < StartTime[y])
+                    if(h <= StartHour[x])
                     {
-                        adtimertime = StartTime[y];
+                        adtimerhour = StartHour[x++];
+                        if(StartHour[x]==0)
+                        {
+                            x = 0;
+                            adtimerhour = StartHour[x];
+                        } else{
+                        };
                         break;
                     }
-                }*/
-                adtimertime = StartTime[x];
+                }
+                adtimertime = StartTime[x];*/
+
+                //Debug
+                StartHour = now.get(now.HOUR_OF_DAY);//時を取得
+                StartTime = now.get(now.MINUTE);     //分を取得
+                StartTime = StartTime + 2 ;
+                if(StartTime >= 58)
+                {
+                    StartHour = StartHour + 1;
+                    StartTime = 2 ;
+                }
+                adtimerhour = StartHour;
+                adtimertime = StartTime;
                 a.addAlarm(adtimerhour,adtimertime);
 
                 // ここにクリックされたときの処理を記述
@@ -246,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return "";
     }
+
 }
 //送信
 //認証
