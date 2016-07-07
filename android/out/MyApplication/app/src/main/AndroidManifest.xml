@@ -53,7 +53,7 @@
         </receiver>
 
         <service android:name="MyAlarmService" ></service>
-        <activity android:name="AlarmNotification" ></activity>
+      <!--  <activity android:name="AlarmNotification" ></activity> -->
 
         <intent-filter>
 
@@ -65,7 +65,7 @@
         </intent-filter>
       <!--  <service android:name="MyAlarmNotification"/>-->
         <service android:name="MyAlarmService"/>
-
+        <service android:name=".AlarmNotification"/>
     </application>
 
 </manifest>

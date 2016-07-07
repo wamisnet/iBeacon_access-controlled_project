@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent notification = new Intent(context, AlarmNotification.class);
         // 画面起動に必要
         notification.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(notification);
+        context.startService(notification);
     }
     
 }
