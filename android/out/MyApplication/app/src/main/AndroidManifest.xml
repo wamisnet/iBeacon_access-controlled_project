@@ -66,6 +66,17 @@
       <!--  <service android:name="MyAlarmNotification"/>-->
         <service android:name="MyAlarmService"/>
         <service android:name=".AlarmNotification"/>
+        <!-- 端末起動時にバッチを呼ぶレシーバ -->
+        <receiver android:name=".bat.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+
+
+        <!-- サンプルのサービス -->
+        <service android:name=".bat.SamplePeriodicService"
+            ></service>
     </application>
 
 </manifest>
