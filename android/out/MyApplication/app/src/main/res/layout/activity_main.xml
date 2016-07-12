@@ -98,17 +98,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout2"
         android:layout_alignParentStart="false"
         android:id="@+id/linearLayout3"
         android:layout_marginTop="10dp">
 
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
             android:text="BackGroundTask"
             android:id="@+id/textView4"
             android:textSize="30sp"
@@ -117,44 +117,13 @@
             android:layout_marginTop="15dp"
             android:gravity="center" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="86dp"
-            android:weightSum="1"
-            android:layout_marginTop="10dp">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent">
-
-                <Button
-                    android:layout_width="121dp"
-                    android:layout_height="wrap_content"
-                    android:text="ON"
-                    android:id="@+id/onbutton"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent">
-
-                <Button
-                    android:layout_width="131dp"
-                    android:layout_height="wrap_content"
-                    android:text="OFF"
-                    android:id="@+id/offbutton"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginTop="5dp"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-        </LinearLayout>
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New ToggleButton"
+            android:id="@+id/toggleButton"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp" />
 
     </LinearLayout>
 
