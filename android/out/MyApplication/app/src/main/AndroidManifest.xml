@@ -67,7 +67,7 @@
         <service android:name="MyAlarmService"/>
         <service android:name=".AlarmNotification"/>
         <!-- 端末起動時にバッチを呼ぶレシーバ -->
-        <receiver android:name=".bat.OnBootReceiver">
+        <receiver android:name=".OnBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
@@ -75,7 +75,7 @@
 
 
         <!-- サンプルのサービス -->
-        <service android:name=".bat.SamplePeriodicService"
+        <service android:name=".SamplePeriodicService"
             ></service>
     </application>
 

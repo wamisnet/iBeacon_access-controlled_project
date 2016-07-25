@@ -3,8 +3,12 @@ package com.example.ogi.myapplication;
 /**
  * Created by ogi on 2016/07/12.
  */
+import android.app.AlarmManager;
 import android.content.Context;
 import android.util.Log;
+import android.widget.EditText;
+
+import java.util.Calendar;
 
 /**
  * 常駐型サービスのサンプル。定期的にログ出力する。
@@ -27,13 +31,14 @@ public class SamplePeriodicService extends BasePeriodicService
     protected void execTask() {
         activeService = this;
 
-
         // ※もし毎回の処理が重い場合は，メインスレッドを妨害しないために
         // ここから下を別スレッドで実行する。
 
 
+
         // ログ出力（ここに定期実行したい処理を書く）
         Log.d("hoge", "fuga");
+
 
         // 次回の実行について計画を立てる
         makeNextPlan();

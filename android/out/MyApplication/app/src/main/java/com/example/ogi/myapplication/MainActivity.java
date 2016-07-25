@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -29,6 +31,13 @@ import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
@@ -44,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     int adtimerhour;
     int adtimertime;
     int x;
+    int tog_flag=0;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,14 +69,76 @@ public class MainActivity extends AppCompatActivity {
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
+        Button tog_btn = (Button) findViewById(R.id.toggleButton);
+
+        // ToggleButtonの切り替えを検出
+        final ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
+
+        assert tb != null;
+        tb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d("toggle", String.valueOf(isChecked));
+                if(isChecked) {
+                    Toast toast = Toast.makeText(MainActivity.this, "サービス処理をONにしました", Toast.LENGTH_SHORT);
+                    toast.show();
+                    // サンプルのサービス常駐を開始
+                    new SamplePeriodicService().startResident(MainActivity.this);
+                    //スタートサービス
+
+                    Calendar now = Calendar.getInstance(); //インスタンス化
+                    int h = now.get(now.HOUR_OF_DAY);//時を取得
+                    int m = now.get(now.MINUTE);     //分を取得
+                    int s = now.get(now.SECOND);      //秒を取得
+                    Context w = null;
+                /*for(x=0 ; x<5 ; x++)//purpose
+                {
+                    if(h <= StartHour[x])
+                    {
+                        adtimerhour = StartHour[x++];
+                        if(StartHour[x]==0)
+                        {
+                            x = 0;
+                            adtimerhour = StartHour[x];
+                        } else{
+                        };
+                        break;
+                    }
+                }
+                adtimertime = StartTime[x];*/
+
+                    //Debug
+                    StartHour = now.get(now.HOUR_OF_DAY);//時を取得
+                    StartTime = now.get(now.MINUTE);     //分を取得
+                    StartTime = StartTime + 2 ;
+                    if(StartTime >= 58)
+                    {
+                        StartHour = StartHour + 1;
+                        StartTime = 2 ;
+                    }
+
+                    MyAlarmManager a = new MyAlarmManager(getApplicationContext());
+
+
+                    adtimerhour = StartHour;
+                    adtimertime = StartTime;
+                    a.addAlarm(adtimerhour,adtimertime);
+                }
+                if(!isChecked) {
+                    Toast toast = Toast.makeText(MainActivity.this, "サービス処理をOFFにしました", Toast.LENGTH_SHORT);
+                    toast.show();
+                    // サンプルのサービス常駐を解除
+                    SamplePeriodicService.stopResidentIfActive(MainActivity.this);
+                }
+
+            }
+        });
         //ブルートゥースサービスを開始させる
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         if(mBluetoothAdapter!= null) {
-            Log.i("TAG", "BL1");
             if (!mBluetoothAdapter.isEnabled()) {
-                Log.i("TAG", "BL2");
                 Toast toast = Toast.makeText(this, "Bluetooth ON!", Toast.LENGTH_LONG);
                 toast.show();
                 mBluetoothAdapter.enable();
@@ -74,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
         et.append(FileRead("user.txt","user"));
+
 
         assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
