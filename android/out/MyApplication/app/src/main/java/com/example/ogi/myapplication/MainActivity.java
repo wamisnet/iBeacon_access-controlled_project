@@ -10,17 +10,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.nifty.cloud.mb.core.DoneCallback;
+import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
+import com.nifty.cloud.mb.core.NCMBQuery;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +34,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.app.Activity;
@@ -222,9 +229,9 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-            Log.d("TAG", "receive!!!");
+         //   Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
-            Log.d("TAG", "device address:" + device.getAddress());
+         //   Log.d("TAG", "device address:" + device.getAddress());
         }
     };
 
@@ -253,22 +260,91 @@ public class MainActivity extends AppCompatActivity {
                         + Integer.toHexString(scanRecord[23] & 0xff)
                         + Integer.toHexString(scanRecord[24] & 0xff);
                 //１0進数
-                int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
-                int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
+                 final int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
+                 final int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-                Log.d(TAG, "UUID:" + uuid);
+              //  Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
                         Toast toast = Toast.makeText(this, "同一のUUIDを検知しました。", Toast.LENGTH_LONG);
                         toast.show();
                         //サーバへ送信
-                        NCMBObject obj = new NCMBObject("TestClass");
+                        final NCMBObject obj = new NCMBObject("TestClass");
                         obj.put("attend",FileRead("user.txt","user"));
+                        try {
+                            obj.increment("incrementKey",1);
+                        } catch (NCMBException e) {
+                            e.printStackTrace();
+                        }
+
+                        NCMBQuery<NCMBObject> query = new NCMBQuery<>("TestClass");
+                        query.whereEqualTo("attend", "いまいにき");
+                        query.findInBackground(new FindCallback<NCMBObject>() {
+                            @Override
+                            public void done(List<NCMBObject> objects, NCMBException e) {
+                                if (e != null) {
+                                    //エラー時の処理
+                                    Log.e("NCMB", "検索に失敗しました。エラー:" + e.getMessage());
+                                } else {
+                                    //成功時の処理
+                                    Log.d("TAG", String.valueOf(objects.size()));
+                                    Log.i("NCMB", "検索に成功しました。");
+                                    if(objects.size()==0) {
+                                        final NCMBObject obj = new NCMBObject("TestClass");
+                                        obj.put("attend",FileRead("user.txt","user"));
+                                        obj.put("major", major);
+                                        obj.put("minor", minor);
+                                        obj.saveInBackground(new DoneCallback() {
+                                            @Override
+                                            public void done(NCMBException e) {
+                                                if (e != null) {
+                                                    //保存失敗
+                                                } else {
+                                                    //保存成功
+                                                }
+                                            }
+                                        });
+                                    }
+                                    }
+                                    // ループカウンタ
+                                    String oldname = null;
+                                    for (int i = 0, n = objects.size(); i < n; i++) {
+                                        NCMBObject o = objects.get(i);
+
+                                        Log.i("NCMB", o.getString("attend"));
+                                        Log.i("NCMB", o.getString("major"));
+
+                                        o.put("major",11);
+                                        o.saveInBackground(new DoneCallback() {
+                                            @Override
+                                            public void done(NCMBException e) {
+                                                if (e != null) {
+                                                    //保存失敗
+                                                } else {
+                                                    //保存成功
+                                                }
+                                            }
+                                        });
+                                        // 処理
+                                        String name = o.getString("attend");
+                                        String timer = o.getString("createDate");
+                                        Integer score = o.getInt("major");
+                                        if(!name.equals(oldname)){
+                                            oldname=name;
+                                        }
+
+
+                                    }
+
+                                }
+
+                        });
+
                         obj.put("major", major);
                         obj.put("minor", minor);
 
-                        obj.saveInBackground(new DoneCallback() {
+                   /*     obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
                                 if (e != null) {
@@ -277,15 +353,16 @@ public class MainActivity extends AppCompatActivity {
                                     //保存成功
                                 }
                             }
-                        });
+                        });*/
                     flag=1;
                     }
                 }
-                Log.d(TAG, "major:" + major);
-                Log.d(TAG, "minor:" + minor);
+
+               // Log.d(TAG, "major:" + major);
+               // Log.d(TAG, "minor:" + minor);
             }
         }
-    }
+}
 
 
    public void FileWrite(String filename, String id, String data){
@@ -300,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     public String removeString(String strSrc, String strRemove) {
         Pattern pattern = Pattern.compile(strRemove);
         Matcher matcher = pattern.matcher(strSrc);
@@ -307,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
 
         return strTmp;
     }
+
     public String FileRead(String filename,String id){
         try {Log.v("fileread","テスト1");
             InputStream in = openFileInput(filename);
@@ -328,7 +407,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return "";
     }
-
 }
 //送信
 //認証
