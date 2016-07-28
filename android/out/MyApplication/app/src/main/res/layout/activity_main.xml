@@ -109,7 +109,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="55dp"
-            android:text="BackGroundTask"
+            android:text="触るな危険→"
             android:id="@+id/textView4"
             android:textSize="30sp"
             android:background="#ffffff"
@@ -125,6 +125,24 @@
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DebugButton"
+            android:id="@+id/debugbutton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false" />
     </LinearLayout>
 
 </RelativeLayout>

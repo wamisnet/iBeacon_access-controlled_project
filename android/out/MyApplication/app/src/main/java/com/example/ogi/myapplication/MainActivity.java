@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Mbaasを使用する為のAPIとキー↓
-        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
+        NCMB.initialize(this.getApplicationContext(), "8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
                 "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         assert progressBar != null;
@@ -77,16 +80,17 @@ public class MainActivity extends AppCompatActivity {
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
         Button tog_btn = (Button) findViewById(R.id.toggleButton);
+        Button debugbutton = (Button) findViewById(R.id.debugbutton);
 
         // ToggleButtonの切り替えを検出
         final ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
 
         assert tb != null;
-        tb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+        tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.d("toggle", String.valueOf(isChecked));
-                if(isChecked) {
+                if (isChecked) {
                     Toast toast = Toast.makeText(MainActivity.this, "サービス処理をONにしました", Toast.LENGTH_SHORT);
                     toast.show();
                     // サンプルのサービス常駐を開始
@@ -117,11 +121,10 @@ public class MainActivity extends AppCompatActivity {
                     //Debug
                     StartHour = now.get(now.HOUR_OF_DAY);//時を取得
                     StartTime = now.get(now.MINUTE);     //分を取得
-                    StartTime = StartTime + 2 ;
-                    if(StartTime >= 58)
-                    {
+                    StartTime = StartTime + 2;
+                    if (StartTime >= 58) {
                         StartHour = StartHour + 1;
-                        StartTime = 2 ;
+                        StartTime = 2;
                     }
 
                     MyAlarmManager a = new MyAlarmManager(getApplicationContext());
@@ -129,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
                     adtimerhour = StartHour;
                     adtimertime = StartTime;
-                    a.addAlarm(adtimerhour,adtimertime);
+                    a.addAlarm(adtimerhour, adtimertime);
                 }
-                if(!isChecked) {
+                if (!isChecked) {
                     Toast toast = Toast.makeText(MainActivity.this, "サービス処理をOFFにしました", Toast.LENGTH_SHORT);
                     toast.show();
                     // サンプルのサービス常駐を解除
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-        if(mBluetoothAdapter!= null) {
+        if (mBluetoothAdapter != null) {
             if (!mBluetoothAdapter.isEnabled()) {
                 Toast toast = Toast.makeText(this, "Bluetooth ON!", Toast.LENGTH_LONG);
                 toast.show();
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         }
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
-        et.append(FileRead("user.txt","user"));
+        et.append(FileRead("user.txt", "user"));
 
 
         assert scan_btn != null;
@@ -173,12 +176,27 @@ public class MainActivity extends AppCompatActivity {
                 // スキャン開始
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
                 progressBar.setVisibility(View.VISIBLE);
-                flag=0;
+                flag = 0;
+                //Log.d("てすとおおおおおおおおお",FileRead("ファイル作成","ファイル作成"));
             }
         });
+
         // クリックイベントを受け取れるようにする
         assert save_btn != null;
         save_btn.setOnClickListener(new OnClickListener() {
+            // このメソッドはクリックされる毎に呼び出される
+            public void onClick(View v) {
+                //スタートサービス
+
+                // ここにクリックされたときの処理を記述
+                EditText edit = (EditText) findViewById(R.id.EditText);
+                assert edit != null;
+                FileWrite("user.txt", "user", edit.getText().toString());
+            }
+        });
+
+        assert debugbutton != null;
+        debugbutton.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
                 //スタートサービス
@@ -208,23 +226,18 @@ public class MainActivity extends AppCompatActivity {
                 //Debug
                 StartHour = now.get(now.HOUR_OF_DAY);//時を取得
                 StartTime = now.get(now.MINUTE);     //分を取得
-                StartTime = StartTime + 2 ;
-                if(StartTime >= 58)
-                {
+                StartTime = StartTime + 2;
+                if (StartTime >= 58) {
                     StartHour = StartHour + 1;
-                    StartTime = 2 ;
+                    StartTime = 2;
                 }
                 adtimerhour = StartHour;
                 adtimertime = StartTime;
-                a.addAlarm(adtimerhour,adtimertime);
-
-                // ここにクリックされたときの処理を記述
-                EditText edit = (EditText) findViewById(R.id.EditText);
-                assert edit != null;
-                FileWrite("user.txt","user" ,edit.getText().toString());
+                a.addAlarm(adtimerhour, adtimertime);
             }
         });
     }
+
     String TAG ="TAG";
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
@@ -279,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         NCMBQuery<NCMBObject> query = new NCMBQuery<>("TestClass");
-                        query.whereEqualTo("attend", "いまいにき");
+                        query.whereEqualTo("attend",FileRead("user.txt","user"));
                         query.findInBackground(new FindCallback<NCMBObject>() {
                             @Override
                             public void done(List<NCMBObject> objects, NCMBException e) {
@@ -288,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                                     Log.e("NCMB", "検索に失敗しました。エラー:" + e.getMessage());
                                 } else {
                                     //成功時の処理
-                                    Log.d("TAG", String.valueOf(objects.size()));
+                                  //  Log.d("TAG", String.valueOf(objects.size()));
                                     Log.i("NCMB", "検索に成功しました。");
                                     if(objects.size()==0) {
                                         final NCMBObject obj = new NCMBObject("TestClass");
@@ -315,7 +328,8 @@ public class MainActivity extends AppCompatActivity {
                                         Log.i("NCMB", o.getString("attend"));
                                         Log.i("NCMB", o.getString("major"));
 
-                                        o.put("major",11);
+                                        o.put("major",major);
+                                        o.put("minor",minor);
                                         o.saveInBackground(new DoneCallback() {
                                             @Override
                                             public void done(NCMBException e) {
