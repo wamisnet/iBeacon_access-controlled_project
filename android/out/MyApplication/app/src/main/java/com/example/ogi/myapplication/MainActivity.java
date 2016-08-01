@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                  final int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
                  final int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-                Log.d(TAG, "UUID:" + uuid);
+                //Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
