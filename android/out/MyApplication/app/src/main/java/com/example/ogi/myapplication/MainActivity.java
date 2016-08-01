@@ -79,13 +79,13 @@ public class MainActivity extends AppCompatActivity {
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
-        Button tog_btn = (Button) findViewById(R.id.toggleButton);
+       // Button tog_btn = (Button) findViewById(R.id.toggleButton);
         Button debugbutton = (Button) findViewById(R.id.debugbutton);
 
         // ToggleButtonの切り替えを検出
-        final ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
+     //   final ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
 
-        assert tb != null;
+      /*  assert tb != null;
         tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     int m = now.get(now.MINUTE);     //分を取得
                     int s = now.get(now.SECOND);      //秒を取得
                     Context w = null;
-                /*for(x=0 ; x<5 ; x++)//purpose
+                for(x=0 ; x<5 ; x++)//purpose
                 {
                     if(h <= StartHour[x])
                     {
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                adtimertime = StartTime[x];*/
+                adtimertime = StartTime[x];
 
                     //Debug
                     StartHour = now.get(now.HOUR_OF_DAY);//時を取得
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        }); */
         //ブルートゥースサービスを開始させる
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     }
                 }, 10000);
-
 
                 // スキャン開始
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
@@ -226,10 +225,10 @@ public class MainActivity extends AppCompatActivity {
                 //Debug
                 StartHour = now.get(now.HOUR_OF_DAY);//時を取得
                 StartTime = now.get(now.MINUTE);     //分を取得
-                StartTime = StartTime + 2;
-                if (StartTime >= 58) {
+                StartTime = StartTime + 1;
+                if (StartTime >= 59) {
                     StartHour = StartHour + 1;
-                    StartTime = 2;
+                    StartTime = 1;
                 }
                 adtimerhour = StartHour;
                 adtimertime = StartTime;
@@ -276,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
                  final int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
                  final int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-              //  Log.d(TAG, "UUID:" + uuid);
+                Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
