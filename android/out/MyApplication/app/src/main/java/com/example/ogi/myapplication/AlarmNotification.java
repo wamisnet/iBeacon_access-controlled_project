@@ -1,14 +1,19 @@
 package com.example.ogi.myapplication;
 
 import android.app.Activity;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiEnterpriseConfig;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -29,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Created by ogi on 2016/06/14.
  */
-public class AlarmNotification extends Activity {
+public class AlarmNotification extends Service {
     private MediaPlayer mp;
     private TextView EditText1;
     private BluetoothManager mBluetoothManager;
@@ -43,28 +48,11 @@ public class AlarmNotification extends Activity {
     BluetoothManager bm;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.notification);
-        //bm = (BluetoothManager) context.getSystemService(context.BLUETOOTH_SERVICE);
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        // スクリーンロックを解除する
-        // 権限が必要
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        Toast.makeText(this, "アラーム！", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
+    public int onStartCommand(Intent intent, int flags, int startId){
+  //  public IBinder onBind(Intent intent) {
+        Log.d("Oncreate", "おんばいんど");
+        Toast.makeText(this, "MyService#onBind"+ ": " + intent, Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "onBind" + ": " + intent);
         Toast.makeText(getApplicationContext(), "アラームスタート！", Toast.LENGTH_LONG).show();
         // 音を鳴らす
         if (mp == null)
@@ -72,25 +60,47 @@ public class AlarmNotification extends Activity {
             mp = MediaPlayer.create(this, R.raw.test);
 
 
-          mp.start();
-      //  g.onCreate();
-      //  g.ble();
+        mp.start();
+        //  g.onCreate();
+        //  g.ble();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // タイムアウト
                 Log.d("Oncreate", "タイムアウト");
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
+
             }
         }, 10000);
         // スキャン開始
         mBluetoothAdapter.startLeScan(mLeScanCallback);
+        flag=0;
+        return 0;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d("Oncreate", "おんくりえいと");
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+
+
+        Toast.makeText(this, "アラーム！", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         stopAndRelease();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void stopAndRelease() {
@@ -100,20 +110,13 @@ public class AlarmNotification extends Activity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        EditText1 = (TextView) findViewById(R.id.EditText);
-        //handler.sendEmptyMessage(WHAT);
-        // mam.stopAlarm();
-    }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-            Log.d("TAG", "receive!!!");
+         //   Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
-            Log.d("TAG", "device address:" + device.getAddress());
+         //   Log.d("TAG", "device address:" + device.getAddress());
         }
     };
 
@@ -147,7 +150,7 @@ public class AlarmNotification extends Activity {
                 int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
                 int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-                Log.d(TAG, "UUID:" + uuid);
+             //   Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
@@ -173,8 +176,8 @@ public class AlarmNotification extends Activity {
                         flag=1;
                     }
                 }
-                Log.d(TAG, "major:" + major);
-                Log.d(TAG, "minor:" + minor);
+              //  Log.d(TAG, "major:" + major);
+              //  Log.d(TAG, "minor:" + minor);
             }
         }
     }

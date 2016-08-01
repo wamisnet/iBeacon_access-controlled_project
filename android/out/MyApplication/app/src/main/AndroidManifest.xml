@@ -20,7 +20,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.example.ogi.myapplication.SplashActivity"
+            android:name=".SplashActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:label="@string/app_name">
@@ -53,7 +53,7 @@
         </receiver>
 
         <service android:name="MyAlarmService" ></service>
-        <activity android:name="AlarmNotification" ></activity>
+      <!--  <activity android:name="AlarmNotification" ></activity> -->
 
         <intent-filter>
 
@@ -65,7 +65,18 @@
         </intent-filter>
       <!--  <service android:name="MyAlarmNotification"/>-->
         <service android:name="MyAlarmService"/>
+        <service android:name=".AlarmNotification"/>
+        <!-- 端末起動時にバッチを呼ぶレシーバ -->
+        <receiver android:name=".OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
 
+
+        <!-- サンプルのサービス -->
+        <service android:name=".SamplePeriodicService"
+            ></service>
     </application>
 
 </manifest>

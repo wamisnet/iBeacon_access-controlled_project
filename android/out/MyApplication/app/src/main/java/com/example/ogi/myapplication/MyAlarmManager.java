@@ -16,7 +16,6 @@ public class MyAlarmManager {
     Context c;
     AlarmManager am;
     private PendingIntent mAlarmSender;
-
     private static final String TAG = MyAlarmManager.class.getSimpleName();
 
     public MyAlarmManager(Context c){
