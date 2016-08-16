@@ -21,13 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.ogi.myapplication.obj_push;
 import com.nifty.cloud.mb.core.DoneCallback;
+import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
+import com.nifty.cloud.mb.core.NCMBQuery;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,12 +58,6 @@ public class AlarmNotification extends Service {
         Log.i(TAG, "onBind" + ": " + intent);
         Toast.makeText(getApplicationContext(), "アラームスタート！", Toast.LENGTH_LONG).show();
         // 音を鳴らす
-        if (mp == null)
-            // resのrawディレクトリにtest.mp3を置いてある
-            mp = MediaPlayer.create(this, R.raw.test);
-
-
-        mp.start();
         //  g.onCreate();
         //  g.ble();
         mHandler.postDelayed(new Runnable() {
@@ -147,37 +144,107 @@ public class AlarmNotification extends Service {
                         + Integer.toHexString(scanRecord[23] & 0xff)
                         + Integer.toHexString(scanRecord[24] & 0xff);
                 //１0進数
-                int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
-                int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
+                final int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
+                final int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-             //   Log.d(TAG, "UUID:" + uuid);
+                //Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {
-                        Log.d(TAG, "UUID一致したンゴｗｗｗ");
+                        Toast toast = Toast.makeText(this, "同一のUUIDを検知しました。", Toast.LENGTH_LONG);
+                        toast.show();
                         //サーバへ送信
-                        NCMBObject obj = new NCMBObject("TestClass");
+                        final NCMBObject obj = new NCMBObject("TestClass");
                         obj.put("attend",FileRead("user.txt","user"));
+                        try {
+                            obj.increment("incrementKey",1);
+                        } catch (NCMBException e) {
+                            e.printStackTrace();
+                        }
+
+                        NCMBQuery<NCMBObject> query = new NCMBQuery<>("TestClass");
+                        query.whereEqualTo("attend",FileRead("user.txt","user"));
+                        query.findInBackground(new FindCallback<NCMBObject>() {
+                            @Override
+                            public void done(List<NCMBObject> objects, NCMBException e) {
+                                if (e != null) {
+                                    //エラー時の処理
+                                    Log.e("NCMB", "検索に失敗しました。エラー:" + e.getMessage());
+                                } else {
+                                    //成功時の処理
+                                    //  Log.d("TAG", String.valueOf(objects.size()));
+                                    Log.i("NCMB", "検索に成功しました。");
+                                    if(objects.size()==0) {
+                                        final NCMBObject obj = new NCMBObject("TestClass");
+                                        obj.put("attend",FileRead("user.txt","user"));
+                                        obj.put("major", major);
+                                        obj.put("minor", minor);
+                                        obj.saveInBackground(new DoneCallback() {
+                                            @Override
+                                            public void done(NCMBException e) {
+                                                if (e != null) {
+                                                    //保存失敗
+                                                } else {
+                                                    //保存成功
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                // ループカウンタ
+                                String oldname = null;
+                                for (int i = 0, n = objects.size(); i < n; i++) {
+                                    NCMBObject o = objects.get(i);
+
+                                    Log.i("NCMB", o.getString("attend"));
+                                    Log.i("NCMB", o.getString("major"));
+
+                                    o.put("major",major);
+                                    o.put("minor",minor);
+                                    o.saveInBackground(new DoneCallback() {
+                                        @Override
+                                        public void done(NCMBException e) {
+                                            if (e != null) {
+                                                //保存失敗
+                                            } else {
+                                                //保存成功
+                                            }
+                                        }
+                                    });
+                                    // 処理
+                                    String name = o.getString("attend");
+                                    String timer = o.getString("createDate");
+                                    Integer score = o.getInt("major");
+                                    if(!name.equals(oldname)){
+                                        oldname=name;
+                                    }
+
+
+                                }
+
+                            }
+
+                        });
+
                         obj.put("major", major);
                         obj.put("minor", minor);
 
-                        obj.saveInBackground(new DoneCallback() {
+                   /*     obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
                                 if (e != null) {
                                     //保存失敗
-                                    Log.d(TAG, "失敗");
                                 } else {
                                     //保存成功
-                                    Log.d(TAG, "成功");
                                 }
                             }
-                        });
+                        });*/
                         flag=1;
                     }
                 }
-              //  Log.d(TAG, "major:" + major);
-              //  Log.d(TAG, "minor:" + minor);
+
+                // Log.d(TAG, "major:" + major);
+                // Log.d(TAG, "minor:" + minor);
             }
         }
     }

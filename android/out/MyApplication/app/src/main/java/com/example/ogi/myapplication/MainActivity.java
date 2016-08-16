@@ -82,67 +82,6 @@ public class MainActivity extends AppCompatActivity {
        // Button tog_btn = (Button) findViewById(R.id.toggleButton);
         Button debugbutton = (Button) findViewById(R.id.debugbutton);
 
-        // ToggleButtonの切り替えを検出
-     //   final ToggleButton tb = (ToggleButton) findViewById(R.id.toggleButton);
-
-      /*  assert tb != null;
-        tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("toggle", String.valueOf(isChecked));
-                if (isChecked) {
-                    Toast toast = Toast.makeText(MainActivity.this, "サービス処理をONにしました", Toast.LENGTH_SHORT);
-                    toast.show();
-                    // サンプルのサービス常駐を開始
-                    new SamplePeriodicService().startResident(MainActivity.this);
-                    //スタートサービス
-
-                    Calendar now = Calendar.getInstance(); //インスタンス化
-                    int h = now.get(now.HOUR_OF_DAY);//時を取得
-                    int m = now.get(now.MINUTE);     //分を取得
-                    int s = now.get(now.SECOND);      //秒を取得
-                    Context w = null;
-                for(x=0 ; x<5 ; x++)//purpose
-                {
-                    if(h <= StartHour[x])
-                    {
-                        adtimerhour = StartHour[x++];
-                        if(StartHour[x]==0)
-                        {
-                            x = 0;
-                            adtimerhour = StartHour[x];
-                        } else{
-                        };
-                        break;
-                    }
-                }
-                adtimertime = StartTime[x];
-
-                    //Debug
-                    StartHour = now.get(now.HOUR_OF_DAY);//時を取得
-                    StartTime = now.get(now.MINUTE);     //分を取得
-                    StartTime = StartTime + 2;
-                    if (StartTime >= 58) {
-                        StartHour = StartHour + 1;
-                        StartTime = 2;
-                    }
-
-                    MyAlarmManager a = new MyAlarmManager(getApplicationContext());
-
-
-                    adtimerhour = StartHour;
-                    adtimertime = StartTime;
-                    a.addAlarm(adtimerhour, adtimertime);
-                }
-                if (!isChecked) {
-                    Toast toast = Toast.makeText(MainActivity.this, "サービス処理をOFFにしました", Toast.LENGTH_SHORT);
-                    toast.show();
-                    // サンプルのサービス常駐を解除
-                    SamplePeriodicService.stopResidentIfActive(MainActivity.this);
-                }
-
-            }
-        }); */
         //ブルートゥースサービスを開始させる
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -157,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
         et.append(FileRead("user.txt", "user"));
-
 
         assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
@@ -176,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
                 progressBar.setVisibility(View.VISIBLE);
                 flag = 0;
-                //Log.d("てすとおおおおおおおおお",FileRead("ファイル作成","ファイル作成"));
             }
         });
 
@@ -191,7 +128,10 @@ public class MainActivity extends AppCompatActivity {
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
                 FileWrite("user.txt", "user", edit.getText().toString());
+                Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
+                toast.show();
             }
+
         });
 
         assert debugbutton != null;
