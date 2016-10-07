@@ -5,10 +5,13 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -65,14 +68,15 @@ public class MainActivity extends AppCompatActivity {
     int x;
     int tog_flag=0;
     private Context context;
+    private int temporaryColorInt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Mbaasを使用する為のAPIとキー↓
-        NCMB.initialize(this.getApplicationContext(), "8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
-                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+        NCMB.initialize(this.getApplicationContext(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+                "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         assert progressBar != null;
         progressBar.setVisibility(View.GONE);
@@ -96,8 +100,30 @@ public class MainActivity extends AppCompatActivity {
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
         et.append(FileRead("user.txt", "user"));
-
         assert scan_btn != null;
+        scan_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        ColorDrawable colorDrawable = (ColorDrawable) v.getBackground();
+                        temporaryColorInt = colorDrawable.getColor();
+                        float[] hsv = new float[3];
+                        Color.colorToHSV(colorDrawable.getColor(), hsv);
+                        hsv[2] -= 0.2f;
+                        v.setBackgroundColor(Color.HSVToColor(hsv));
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.setBackgroundColor(temporaryColorInt);
+                        break;
+                }
+                return false;
+            }
+        });
+
+    //    assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 mHandler.postDelayed(new Runnable() {
@@ -116,9 +142,30 @@ public class MainActivity extends AppCompatActivity {
                 flag = 0;
             }
         });
+        assert save_btn != null;
+        save_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        ColorDrawable colorDrawable = (ColorDrawable) v.getBackground();
+                        temporaryColorInt = colorDrawable.getColor();
+                        float[] hsv = new float[3];
+                        Color.colorToHSV(colorDrawable.getColor(), hsv);
+                        hsv[2] -= 0.2f;
+                        v.setBackgroundColor(Color.HSVToColor(hsv));
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.setBackgroundColor(temporaryColorInt);
+                        break;
+                }
+                return false;
+            }
+        });
 
         // クリックイベントを受け取れるようにする
-        assert save_btn != null;
         save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
@@ -133,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
 
         assert debugbutton != null;
         debugbutton.setOnClickListener(new OnClickListener() {
