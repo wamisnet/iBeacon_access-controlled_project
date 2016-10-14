@@ -40,28 +40,6 @@
             </intent-filter>
         </activity>
 
-       <!-- <receiver
-            android:name="AlarmReceiver" >
-            <intent-filter>
-                <action android:name="MyAlarmAction"></action>
-            </intent-filter>
-        </receiver>
-
-        <intent-filter>
-            <action android:name="android.intent.action.ACTION_HEADSET_PLUG" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter> -->
-
-      <!--  <service android:name="MyAlarmNotification"/>-->
-      <!--  <service android:name="MyAlarmService"/>
-        <service android:name=".AlarmNotification"/>-->
-        <!-- 端末起動時にバッチを呼ぶレシーバ -->
-       <!-- <receiver android:name=".OnBootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
-            </intent-filter>
-        </receiver> -->
-
         <receiver
             android:name=".SampleBroadcastReceiver"
             android:process=":remote" >
@@ -81,8 +59,6 @@
 
         <!-- サンプルのサービス -->
         <service android:name=".SampleServices"></service>
-        <!--  <service android:name=".SamplePeriodicService"> </service>
-          <service android:name="MyAlarmService" ></service> -->
       </application>
 
   </manifest>

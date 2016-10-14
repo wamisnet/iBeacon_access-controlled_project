@@ -280,75 +280,9 @@ public class MainActivity extends AppCompatActivity {
                         } catch (NCMBException e) {
                             e.printStackTrace();
                         }
-
-                        NCMBQuery<NCMBObject> query = new NCMBQuery<>("TestClass");
-                        query.whereEqualTo("attend",FileRead("user.txt","user"));
-                        query.findInBackground(new FindCallback<NCMBObject>() {
-                            @Override
-                            public void done(List<NCMBObject> objects, NCMBException e) {
-                                if (e != null) {
-                                    //エラー時の処理
-                                    Log.e("NCMB", "検索に失敗しました。エラー:" + e.getMessage());
-                                } else {
-                                    //成功時の処理
-                                  //  Log.d("TAG", String.valueOf(objects.size()));
-                                    Log.i("NCMB", "検索に成功しました。");
-                                    if(objects.size()==0) {
-                                        final NCMBObject obj = new NCMBObject("TestClass");
-                                        obj.put("attend",FileRead("user.txt","user"));
-                                        obj.put("major", major);
-                                        obj.put("minor", minor);
-                                        obj.saveInBackground(new DoneCallback() {
-                                            @Override
-                                            public void done(NCMBException e) {
-                                                if (e != null) {
-                                                    //保存失敗
-                                                } else {
-                                                    //保存成功
-                                                }
-                                            }
-                                        });
-                                    }
-                                    }
-                                    // ループカウンタ
-                                    String oldname = null;
-                                    for (int i = 0, n = objects.size(); i < n; i++) {
-                                        NCMBObject o = objects.get(i);
-
-                                        Log.i("NCMB", o.getString("attend"));
-                                        Log.i("NCMB", o.getString("major"));
-
-                                        o.put("major",major);
-                                        o.put("minor",minor);
-                                        o.saveInBackground(new DoneCallback() {
-                                            @Override
-                                            public void done(NCMBException e) {
-                                                if (e != null) {
-                                                    //保存失敗
-                                                } else {
-                                                    //保存成功
-                                                }
-                                            }
-                                        });
-                                        // 処理
-                                        String name = o.getString("attend");
-                                        String timer = o.getString("createDate");
-                                        Integer score = o.getInt("major");
-                                        if(!name.equals(oldname)){
-                                            oldname=name;
-                                        }
-
-
-                                    }
-
-                                }
-
-                        });
-
                         obj.put("major", major);
                         obj.put("minor", minor);
-
-                   /*     obj.saveInBackground(new DoneCallback() {
+                        obj.saveInBackground(new DoneCallback() {
                             @Override
                             public void done(NCMBException e) {
                                 if (e != null) {
@@ -357,13 +291,11 @@ public class MainActivity extends AppCompatActivity {
                                     //保存成功
                                 }
                             }
-                        });*/
+                        });
                     flag=1;
                     }
                 }
 
-               // Log.d(TAG, "major:" + major);
-               // Log.d(TAG, "minor:" + minor);
             }
         }
 }
