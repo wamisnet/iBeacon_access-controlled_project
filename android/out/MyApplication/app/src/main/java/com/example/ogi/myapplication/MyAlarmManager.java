@@ -29,7 +29,6 @@ public class MyAlarmManager {
 
     public void addAlarm(int alarmHour, int alarmMinute){
         // アラームを設定する
-        mAlarmSender = this.getPendingIntent();
 
         // アラーム時間設定
         Calendar cal = Calendar.getInstance();
@@ -58,10 +57,4 @@ public class MyAlarmManager {
         //spm.updateToRevival();
     }
 
-    private PendingIntent getPendingIntent() {
-        // アラーム時に起動するアプリケーションを登録
-        Intent intent = new Intent(c, MyAlarmService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(c, PendingIntent.FLAG_ONE_SHOT, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pendingIntent;
-    }
 }

@@ -58,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
     Handler mHandler = new Handler();
     int flag=0;
     ProgressBar progressBar;
-    //int StartHour[] = {9,10,13,14,0};
-    int StartHour;
-    //int StartTime[] = {15,55,15,55,00};
-    int StartTime;
+    int StartHour[] = {9,10,13,14,0};
+    int StartTime[] = {15,55,15,55,00};
+    //int StartHour;
+    //int StartTime;
     int stopHour[] = {9,11,13,15,24};
     int stopTime[] = {21,1,21,1,00};
     int adtimerhour;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     int tog_flag=0;
     private Context context;
     private int temporaryColorInt;
-
+    int i=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         assert debugbutton != null;
-        debugbutton.setOnClickListener(new OnClickListener() {
+       /* debugbutton.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
                 //スタートサービス
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                adtimertime = StartTime[x];*/
+                adtimertime = StartTime[x];
 
                 //Debug
                 StartHour = now.get(now.HOUR_OF_DAY);//時を取得
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 adtimertime = StartTime;
                 a.addAlarm(adtimerhour, adtimertime);
             }
-        });
+        });*/
     }
 
     String TAG ="TAG";
