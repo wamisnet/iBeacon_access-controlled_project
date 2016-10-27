@@ -4,12 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 
 /**
  * Created by ogi on 2016/07/05.

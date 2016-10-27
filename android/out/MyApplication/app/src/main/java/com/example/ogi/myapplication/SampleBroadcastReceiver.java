@@ -18,7 +18,6 @@ public class SampleBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
         }
-
         // AlarmManager を開始する
         SampleServices.startAlarm(context);
     }

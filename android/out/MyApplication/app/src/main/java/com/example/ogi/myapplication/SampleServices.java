@@ -12,14 +12,11 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +72,6 @@ public class SampleServices extends IntentService {
         int StartHour;
         int StartTime;
         int x;
-
         // 実行するサービスを指定する
         PendingIntent pendingIntent = PendingIntent.getService(context, 0,
                 new Intent(context, SampleServices.class),
@@ -97,28 +93,14 @@ public class SampleServices extends IntentService {
                     if(h <= dStartHour[x]) {
                         adtimerhour = dStartHour[x];
                         adtimertime = dStartTime[x];
-                        Log.d("ループ0-dstarthour", String.valueOf(dStartHour[x]));
-                        Log.d("ループ0-dstarttime", String.valueOf(dStartTime[x]));
-
                         if(m > dStartTime[x] & h == dStartHour[x] ) {
-                            continue;
-                        }
-                            break;
-                    }
-
-
+                            continue;}
+                            break;}
                         if (x==4) {
                             adtimerhour = dStartHour[0];
                             adtimertime = dStartTime[0];
-                            Log.d("ループ2-adtimerhour", String.valueOf(adtimerhour));
-                            Log.d("ループ2-dstarthour", String.valueOf(dStartHour[x]));
-                            Log.d("ループ2-adtimertime", String.valueOf(adtimertime));
-                            Log.d("ループ2-dstarttime", String.valueOf(dStartTime[x]));
-                            break;
-                        }
-                    Log.d("IF外", String.valueOf(adtimerhour));
-                }
-
+                            break;}
+                    Log.d("IF外", String.valueOf(adtimerhour));}
                 //Debug
                 if (m >= 59) {
                     adtimerhour = dStartHour[++x];
@@ -137,7 +119,6 @@ public class SampleServices extends IntentService {
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-
             getScanData(scanRecord);
         }
     };
@@ -170,7 +151,6 @@ public class SampleServices extends IntentService {
                 final int major = (scanRecord[25] & 0xff)*256 + (scanRecord[26] & 0xff);
                 final int minor = (scanRecord[27] & 0xff)*256 + (scanRecord[28] & 0xff);
 
-                //Log.d(TAG, "UUID:" + uuid);
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb"))
                 {
                     if(flag==0) {

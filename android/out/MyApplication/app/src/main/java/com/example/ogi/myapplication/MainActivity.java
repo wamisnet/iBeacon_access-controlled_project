@@ -4,73 +4,39 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.nifty.cloud.mb.core.DoneCallback;
-import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
-import com.nifty.cloud.mb.core.NCMBQuery;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.Calendar;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
     BluetoothAdapter mBluetoothAdapter;
     Handler mHandler = new Handler();
     int flag=0;
     ProgressBar progressBar;
-    int StartHour[] = {9,10,13,14,0};
-    int StartTime[] = {15,55,15,55,00};
-    //int StartHour;
-    //int StartTime;
-    int stopHour[] = {9,11,13,15,24};
-    int stopTime[] = {21,1,21,1,00};
-    int adtimerhour;
-    int adtimertime;
-    int x;
-    int tog_flag=0;
-    private Context context;
     private int temporaryColorInt;
-    int i=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
-       // Button tog_btn = (Button) findViewById(R.id.toggleButton);
-        Button debugbutton = (Button) findViewById(R.id.debugbutton);
 
         //ブルートゥースサービスを開始させる
         final BluetoothManager bluetoothManager =
@@ -172,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
-                //スタートサービス
 
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
@@ -184,57 +147,13 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
-        assert debugbutton != null;
-       /* debugbutton.setOnClickListener(new OnClickListener() {
-            // このメソッドはクリックされる毎に呼び出される
-            public void onClick(View v) {
-                //スタートサービス
-
-                Calendar now = Calendar.getInstance(); //インスタンス化
-                int h = now.get(now.HOUR_OF_DAY);//時を取得
-                int m = now.get(now.MINUTE);     //分を取得
-                int s = now.get(now.SECOND);      //秒を取得
-                Context w = null;
-                MyAlarmManager a = new MyAlarmManager(getApplicationContext());
-                /*for(x=0 ; x<5 ; x++)//purpose
-                {
-                    if(h <= StartHour[x])
-                    {
-                        adtimerhour = StartHour[x++];
-                        if(StartHour[x]==0)
-                        {
-                            x = 0;
-                            adtimerhour = StartHour[x];
-                        } else{
-                        };
-                        break;
-                    }
-                }
-                adtimertime = StartTime[x];
-
-                //Debug
-                StartHour = now.get(now.HOUR_OF_DAY);//時を取得
-                StartTime = now.get(now.MINUTE);     //分を取得
-                StartTime = StartTime + 1;
-                if (StartTime >= 59) {
-                    StartHour = StartHour + 1;
-                    StartTime = 1;
-                }
-                adtimerhour = StartHour;
-                adtimertime = StartTime;
-                a.addAlarm(adtimerhour, adtimertime);
-            }
-        });*/
     }
 
-    String TAG ="TAG";
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
          //   Log.d("TAG", "receive!!!");
             getScanData(scanRecord);
-         //   Log.d("TAG", "device address:" + device.getAddress());
         }
     };
 
@@ -344,6 +263,4 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 }
-//送信
-//認証
 
