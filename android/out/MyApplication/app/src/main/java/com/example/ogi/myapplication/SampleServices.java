@@ -27,10 +27,14 @@ import java.util.regex.Pattern;
 
 public class SampleServices extends IntentService {
 
-    int StartHour[] = {9,10,13,14,0};
-    int StartTime[] = {15,55,15,55,00};
-    private static int dStartHour[] = {10,10,11,11,0};//デバッグ用
-    private static int dStartTime[] = {12,30,20,25,00};
+    int StartHour[] = {9,11,13,15,0};
+    int StartTime[] = {21,01,21,01,00};
+    private static int dStartHour[] = {10,11,15,15,0};//デバッグ用
+    private static int dStartTime[] = {30,45,10,49,00};
+
+   // private static int dStartHour[] = {10,10,10,10,0};//デバッグ用
+   // private static int dStartTime[] = {30,45,50,55,00};
+
     BluetoothAdapter mBluetoothAdapter;
     Handler mHandler = new Handler();
     int flag = 0;
@@ -46,15 +50,15 @@ public class SampleServices extends IntentService {
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         Toast.makeText(getApplicationContext(), "検出開始", Toast.LENGTH_LONG).show();
+        // スキャン開始
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // タイムアウト
-                Log.d("onHandleIntent", "タイムアウト");
+                Log.d("Oncreate", "タイムアウト");
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
             }
-        }, 5000);
-        // スキャン開始
+        }, 3000);
         mBluetoothAdapter.startLeScan(mLeScanCallback);
         flag=0;
         //スキャン後タイマー設定
@@ -100,15 +104,22 @@ public class SampleServices extends IntentService {
                             adtimerhour = dStartHour[0];
                             adtimertime = dStartTime[0];
                             break;}
-                    Log.d("IF外", String.valueOf(adtimerhour));}
+                }
                 //Debug
                 if (m >= 59) {
                     adtimerhour = dStartHour[++x];
                     adtimertime = 1;
                 }
 
-    //Month指定は0から始まる　(ex:1月→0 2月→1
-        now.set(y,M,d,adtimerhour,adtimertime,s);
+        //Month指定は0から始まる　(ex:1月→0 2月→1
+        now.set(y,M,d,adtimerhour,adtimertime,55);
+        if(x == 4)
+        {
+            Log.d("カレンダー前", String.valueOf(d));
+            now.add(now.DAY_OF_MONTH, 1);
+            Log.d("カレンダー後", String.valueOf(now.get(now.DATE)));
+            now.set(y,M,now.get(now.DATE),adtimerhour,adtimertime,55);
+        }
         Log.d("設定前-adtimerhour", String.valueOf(adtimerhour));
         Log.d("設定前-adtimertime", String.valueOf(adtimertime));
         Log.d("端末時間", String.valueOf(m));
