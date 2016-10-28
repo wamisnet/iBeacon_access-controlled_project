@@ -41,7 +41,7 @@
         </activity>
 
         <receiver
-            android:name=".SampleBroadcastReceiver"
+            android:name=".AlarmReceiver"
             android:process=":remote" >
             <intent-filter>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -58,7 +58,7 @@
         </receiver>
 
         <!-- サンプルのサービス -->
-        <service android:name=".SampleServices"></service>
+        <service android:name=".TimerServices"></service>
       </application>
 
   </manifest>

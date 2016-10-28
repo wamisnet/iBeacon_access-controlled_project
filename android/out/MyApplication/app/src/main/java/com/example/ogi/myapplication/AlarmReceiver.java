@@ -3,11 +3,10 @@ package com.example.ogi.myapplication;
 /**
  * Created by ogi on 2016/10/14.
  */
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class SampleBroadcastReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends android.content.BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -19,6 +18,6 @@ public class SampleBroadcastReceiver extends BroadcastReceiver {
             }
         }
         // AlarmManager を開始する
-        SampleServices.startAlarm(context);
+        TimerServices.startAlarm(context);
     }
 }
