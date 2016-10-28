@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
@@ -25,7 +24,6 @@ public class BLEManager {
 
     private BluetoothAdapter mBluetoothAdapter;
     private boolean bleflg;//bleが起動していたかどうかFlgで管理
-
     private Handler mHandler = new Handler();
     private int flag=0;
     public void search(){
@@ -34,7 +32,7 @@ public class BLEManager {
             @Override
             public void run() {
                 // タイムアウト
-                Log.d("BLEManager Scarch()", "タイムアウト");
+                Log.d("BLEManager Search()", "タイムアウト");
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
                 bleDisable();
             }
@@ -44,8 +42,6 @@ public class BLEManager {
         mBluetoothAdapter.startLeScan(mLeScanCallback);
         flag = 0;
     }
-
-
 
     public void init(){
         BluetoothManager bluetoothManager=(BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
@@ -57,7 +53,6 @@ public class BLEManager {
             }
         }
     }
-
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
@@ -120,7 +115,6 @@ public class BLEManager {
                         flag = 1;
                     }
                 }
-
             }
         }
     }
@@ -140,5 +134,4 @@ public class BLEManager {
             mBluetoothAdapter.disable();
         }
     }
-
 }

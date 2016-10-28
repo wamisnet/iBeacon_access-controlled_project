@@ -41,9 +41,7 @@
             android:gravity="center"
             android:textIsSelectable="false"
             android:theme="@style/EditTextColorControl"
-            android:layout_marginTop="20dp"
-            android:inputType="textVisiblePassword|text|textCapSentences"
-            android:maxLength="6" />
+            android:layout_marginTop="20dp" />
         <!--android:background="#ffffff"-->
 
         <Button

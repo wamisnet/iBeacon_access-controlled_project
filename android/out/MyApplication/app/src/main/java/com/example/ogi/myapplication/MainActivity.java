@@ -1,13 +1,8 @@
 package com.example.ogi.myapplication;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,9 +12,7 @@ import android.widget.EditText;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.nifty.cloud.mb.core.NCMB;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    //    assert scan_btn != null;
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -124,10 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
     }
-
-
 
    public void FileWrite(String filename, String id, String data){
         try {
