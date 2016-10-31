@@ -93,7 +93,7 @@ public class BLEManager {
                     if (flag == 0) {
                         Log.d("BLEManagerget.ScanData()", "同一のUUIDを検知しました");
                         //サーバへ送信
-                        final NCMBObject obj = new NCMBObject("TestClass");
+                        final NCMBObject obj = new NCMBObject("AttendClass");
                         obj.put("attend",mUser);
                         try {
                             obj.increment("incrementKey", 1);
