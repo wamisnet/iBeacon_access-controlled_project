@@ -3,6 +3,7 @@ package com.example.ogi.myapplication;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+               setProgressTime(5000,progressBar);
                 ble.search();
-                progressBar.setVisibility(View.GONE);
+               //
             }
         });
         assert save_btn != null;
@@ -159,6 +160,17 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private void setProgressTime(int time, final ProgressBar mprogressBar){
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mprogressBar.setVisibility(View.GONE);
+            }
+        }, time);
+        mprogressBar.setVisibility(View.VISIBLE);
     }
 }
 
