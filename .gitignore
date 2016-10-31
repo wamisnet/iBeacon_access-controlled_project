@@ -1,0 +1,5 @@
+android/print/print/app/build/
+*.properties
+android/print/print/build/generated/mockable-android-24.jar
+android/print/print/.idea/workspace.xml
+android/print/print/
