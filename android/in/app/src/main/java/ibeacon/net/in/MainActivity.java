@@ -81,7 +81,7 @@ public class MainActivity extends Fragment {
         byteBuffer.put((byte) 0x15);
 
         // UUID（10―25バイト目）
-        final UUID uuid = UUID.fromString("12345678-1234-1234-1234-123456789012");
+        final UUID uuid = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
         // 上位64ビットを追加
         byteBuffer.putLong(uuid.getMostSignificantBits());
         // 下位64ビットを追加
