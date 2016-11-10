@@ -3,4 +3,6 @@
     <string name="教室番号">教室番号</string>
     <string name="ble_start">BLE　Start</string>
     <string name="Transmitter">Transmitter</string>
+    <string name="Save">Save</string>
+    <string name="edit">教室番号を入力してください</string>
 </resources>
