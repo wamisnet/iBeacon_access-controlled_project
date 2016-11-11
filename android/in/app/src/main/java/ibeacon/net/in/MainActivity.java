@@ -9,9 +9,22 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends Activity {
@@ -26,6 +39,11 @@ public class MainActivity extends Activity {
         // Bluetoothの生成（ここは5.0以前と一緒）
         BluetoothManager manager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter bluetoothAdapter = manager.getAdapter();
+
+        //起動時ファイル読み込み
+        EditText et = (EditText) findViewById(R.id.editText);
+        assert et != null;
+        et.append(FileRead("user.txt", "user"));
 
         // Bluetoothサポートチェック
         final boolean isBluetoothSupported = bluetoothAdapter != null;
@@ -88,10 +106,41 @@ public class MainActivity extends Activity {
         // AdvertiseData作成
         final AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
         dataBuilder.addManufacturerData(appleManufactureId, manufacturerData);
-
         mAdvertiseCallback = new IBeaconAdvertiseCallback();
-        mBluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
 
+        findViewById(R.id.startble_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mBluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
+                Toast toast = Toast.makeText(getApplicationContext(), "送信開始します", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+
+        findViewById(R.id.stopble_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
+                mBluetoothLeAdvertiser = null;
+                Toast toast = Toast.makeText(getApplicationContext(), "送信終了しました", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+
+        findViewById(R.id.savebutton).setOnClickListener(new View.OnClickListener() {
+            // このメソッドはクリックされる毎に呼び出される
+            public void onClick(View v) {
+
+                // ここにクリックされたときの処理を記述
+                EditText edit = (EditText) findViewById(R.id.editText);
+                assert edit != null;
+                FileWrite("user.txt", "user", edit.getText().toString());
+                Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+
+        });
     }
     public void onDestroy() {
         // Advertiseの停止
@@ -100,5 +149,48 @@ public class MainActivity extends Activity {
             mBluetoothLeAdvertiser = null;
         }
         super.onDestroy();
+    }
+
+    public void FileWrite(String filename, String id, String data){
+        try {
+            OutputStream out = openFileOutput(filename, MODE_PRIVATE);
+            PrintWriter writer =
+                    new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.append(id+":"+data+"\n");
+            writer.close();
+            Log.d("FileWrite:","ID:"+id+"data:"+data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String removeString(String strSrc, String strRemove) {
+        Pattern pattern = Pattern.compile(strRemove);
+        Matcher matcher = pattern.matcher(strSrc);
+        String strTmp = matcher.replaceAll("");
+
+        return strTmp;
+    }
+
+    public String FileRead(String filename, String id){
+        try {Log.v("fileread","テスト1");
+            InputStream in = openFileInput(filename);
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
+            String search;
+            while ((search = reader.readLine()) != null) {
+                if(search.startsWith(id)){
+                    Log.v("fileread",search);
+                    reader.close();
+                    return removeString(search,id+":");
+                }
+                Log.v("fileread","テスト２");
+            }
+            reader.close();
+            return "";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

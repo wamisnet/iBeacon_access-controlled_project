@@ -21,14 +21,26 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/editText"
-        android:inputType="textVisiblePassword|none"
+        android:inputType="textVisiblePassword|textNoSuggestions|none"
         android:layout_marginTop="40dp"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:textColorHint="#ff0000"
         android:layout_weight="0.14"
         android:hint="@string/edit"
         android:textStyle="normal"
-        android:textColor="#0000ff" />
+        android:textColor="#0000ff"
+        android:maxLength="10"
+        android:paddingBottom="20dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp" />
+
+    <ListPreference
+        android:key="list_preference"
+        android:title="ListPreference"
+        android:summary="ListPreference"
+        android:entries="@array/entries_list_preference"
+        android:entryValues="@array/entryvalues_list_preference"
+        android:dialogTitle="ListPreference" />
 
     <Button
         android:layout_width="fill_parent"
@@ -39,15 +51,39 @@
         android:textSize="30sp"
         android:layout_weight="0.50"
         android:layout_gravity="center_horizontal"
-        android:textStyle="normal" />
+        android:textStyle="normal"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp" />
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:text="@string/ble_start"
-        android:id="@+id/button"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="70dp"
-        android:layout_weight="0.50"
-        android:textSize="30sp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:text="@string/ble_start"
+            android:id="@+id/startble_button"
+            android:layout_marginTop="70dp"
+            android:layout_weight="0.50"
+            android:textSize="30sp"
+            android:layout_marginLeft="80dp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.50" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:text="@string/ble_stop"
+            android:id="@+id/stopble_button"
+            android:layout_weight="0.91"
+            android:layout_marginTop="70dp"
+            android:layout_marginRight="80dp"
+            android:textSize="30sp" />
+    </LinearLayout>
+
 </LinearLayout>

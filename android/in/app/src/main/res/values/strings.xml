@@ -5,4 +5,5 @@
     <string name="Transmitter">Transmitter</string>
     <string name="Save">Save</string>
     <string name="edit">教室番号を入力してください</string>
+    <string name="ble_stop">BLE STOP</string>
 </resources>
