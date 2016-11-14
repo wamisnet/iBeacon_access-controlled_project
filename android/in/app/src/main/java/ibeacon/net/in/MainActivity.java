@@ -51,8 +51,8 @@ public class MainActivity extends Activity {
         BluetoothManager manager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter bluetoothAdapter = manager.getAdapter();
 
-        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
-                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+        NCMB.initialize(getApplication(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+                "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("ClassRoom");
 
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
             @Override
             public void done(List<NCMBObject> results, NCMBException e) {
                 if (e != null) {
-                    Log.d("deta", "err");
+                    Log.d("query", "err");
                     //検索失敗時の処理
                 } else {
                     Log.d("deta", String.valueOf(results.get(0)));
