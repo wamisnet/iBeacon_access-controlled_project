@@ -10,8 +10,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.nifty.cloud.mb.core.FindCallback;
+import com.nifty.cloud.mb.core.NCMB;
+import com.nifty.cloud.mb.core.NCMBException;
+import com.nifty.cloud.mb.core.NCMBObject;
+import com.nifty.cloud.mb.core.NCMBQuery;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,14 +41,66 @@ public class MainActivity extends Activity {
     BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     IBeaconAdvertiseCallback mAdvertiseCallback;
     private final String TAG = "mainActivity";
-
+    private ArrayAdapter<String> adapter = null;
+    private ListView _listView = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment1);
+        setContentView(R.layout.mainactivity);
         // Bluetoothの生成（ここは5.0以前と一緒）
         BluetoothManager manager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter bluetoothAdapter = manager.getAdapter();
+
+        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
+                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+//TestClassを検索するためのNCMBQueryインスタンスを作成
+        NCMBQuery<NCMBObject> query = new NCMBQuery<>("ClassRoom");
+
+//keyというフィールドがvalueとなっているデータを検索する条件を設定
+        query.whereEqualTo("major", "200");
+
+//データストアからデータを検索
+        query.findInBackground(new FindCallback<NCMBObject>() {
+            @Override
+            public void done(List<NCMBObject> results, NCMBException e) {
+                if (e != null) {
+                    Log.d("deta", "err");
+                    //検索失敗時の処理
+                } else {
+                    Log.d("deta", String.valueOf(results.get(0)));
+                    Log.d("deta", "end");
+                    //検索成功時の処理
+                }
+            }
+        });
+        // LayoutファイルのListViewのリソースID
+        _listView = (ListView) findViewById(R.id.list_item);
+
+        // Androidフレームワーク標準のレイアウト
+        adapter = new ArrayAdapter<String>(getApplicationContext(),
+                R.layout.custom_listview
+        );
+
+        // ListViewの初期表示
+        adapter.add("Japan");
+        adapter.add("Tokyo");
+        adapter.add("Japan");
+        adapter.add("Tokyo");
+        adapter.add("Japan");
+        adapter.add("Tokyo");
+
+        _listView.setAdapter(adapter);
+        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //ここに処理を書く
+                // 選択したListViewアイテムを表示する
+                ListView list = (ListView) parent;
+                String selectedItem = (String) list.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(), selectedItem,
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         //起動時ファイル読み込み
         EditText et = (EditText) findViewById(R.id.editText);

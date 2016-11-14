@@ -20,10 +20,13 @@
     <ListView
         android:id="@+id/list_item"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
         android:paddingBottom="20dp"
         android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"/>
+        android:layout_marginRight="80dp"
+        android:textColor="#000000"
+        style="@style/Widget.AppCompat.Light.ListView.DropDown"
+        android:scrollbars="horizontal|vertical"
+        android:layout_height="200dp" />
 
     <EditText
         android:layout_width="match_parent"

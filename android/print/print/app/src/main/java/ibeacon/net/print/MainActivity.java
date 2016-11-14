@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
                 "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
 
         //TestClassを検索するためのNCMBQueryインスタンスを作成
-        NCMBQuery<NCMBObject> query = new NCMBQuery<>("TestClass");
+        NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");
 
 //keyというフィールドがvalueとなっているデータを検索する条件を設定
         query.whereEqualTo("major", "65000");
