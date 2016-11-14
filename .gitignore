@@ -5,3 +5,4 @@ android/print/print/.gradle/
 android/print/print/.idea/
 android/print/print/build/
 android/in/.gradle/
+*.properties
