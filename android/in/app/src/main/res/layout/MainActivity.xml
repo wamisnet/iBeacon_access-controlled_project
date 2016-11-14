@@ -17,6 +17,14 @@
         android:textColor="#696969"
         android:layout_marginTop="50dp" />
 
+    <ListView
+        android:id="@+id/list_item"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:paddingBottom="20dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"/>
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -34,13 +42,7 @@
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp" />
 
-    <ListPreference
-        android:key="list_preference"
-        android:title="ListPreference"
-        android:summary="ListPreference"
-        android:entries="@array/entries_list_preference"
-        android:entryValues="@array/entryvalues_list_preference"
-        android:dialogTitle="ListPreference" />
+
 
     <Button
         android:layout_width="fill_parent"
