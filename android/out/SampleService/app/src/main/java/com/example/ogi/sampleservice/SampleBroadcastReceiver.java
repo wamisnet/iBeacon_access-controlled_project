@@ -1,12 +1,13 @@
-package com.example.ogi.myapplication;
+package com.example.ogi.sampleservice;
 
 /**
- * Created by ogi on 2016/10/14.
+ * Created by ogi on 2016/10/07.
  */
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class AlarmReceiver extends android.content.BroadcastReceiver {
+public class SampleBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -17,7 +18,8 @@ public class AlarmReceiver extends android.content.BroadcastReceiver {
                 return;
             }
         }
+
         // AlarmManager を開始する
-        TimerServices.startAlarm(context);
+        SampleService.startAlarm(context);
     }
 }
