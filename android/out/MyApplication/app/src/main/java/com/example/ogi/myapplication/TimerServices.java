@@ -103,7 +103,7 @@ public class TimerServices extends IntentService {
         Toast.makeText(getApplicationContext(), "検出開始", Toast.LENGTH_LONG).show();
         bleManager=new BLEManager(this);
         bleManager.init();
-        bleManager.setUser(mainActivity.FileRead("user.txt", "user"));
+       // bleManager.setUser(mainActivity.FileRead("user.txt", "user"));
         bleManager.search();
 
         //スキャン後タイマー設定
