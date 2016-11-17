@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private int temporaryColorInt;
     BLEManager ble;
+    FileManager fileManager=new FileManager(getApplication());
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
-        et.append(FileRead("user.txt", "user"));
-        ble.setUser(FileRead("user.txt", "user"));
+        et.append(fileManager.FileRead("user.txt", "user"));
+        ble.setUser(fileManager.FileRead("user.txt", "user"));
         assert scan_btn != null;
         scan_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -110,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
-                FileWrite("user.txt", "user", edit.getText().toString());
-                ble.setUser(FileRead("user.txt", "user"));
+                fileManager.FileWrite("user.txt", "user", edit.getText().toString());
+                ble.setUser(fileManager.FileRead("user.txt", "user"));
                 Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -119,48 +120,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-   public void FileWrite(String filename, String id, String data){
-        try {
-            OutputStream out = openFileOutput(filename, MODE_PRIVATE);
-            PrintWriter writer =
-                    new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.append(id+":"+data+"\n");
-            writer.close();
-            Log.d("FileWrite:","ID:"+id+"data:"+data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String removeString(String strSrc, String strRemove) {
-        Pattern pattern = Pattern.compile(strRemove);
-        Matcher matcher = pattern.matcher(strSrc);
-        String strTmp = matcher.replaceAll("");
-
-        return strTmp;
-    }
-
-    public String FileRead(String filename, String id){
-        try {Log.v("fileread","テスト1");
-            InputStream in = openFileInput(filename);
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String search;
-            while ((search = reader.readLine()) != null) {
-                if(search.startsWith(id)){
-                    Log.v("fileread",search);
-                    reader.close();
-                    return removeString(search,id+":");
-                }
-                Log.v("fileread","テスト２");
-            }
-            reader.close();
-            return "";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 
     private void setProgressTime(int time, final ProgressBar mprogressBar){
         Handler mHandler = new Handler();

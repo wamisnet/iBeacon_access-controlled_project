@@ -95,15 +95,14 @@ public class TimerServices extends IntentService {
 
     //時間になると呼び出される
     BLEManager bleManager;
-    MainActivity mainActivity;
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        FileManager fileManager=new FileManager(getApplicationContext());
         Toast.makeText(getApplicationContext(), "検出開始", Toast.LENGTH_LONG).show();
         bleManager=new BLEManager(this);
         bleManager.init();
-        bleManager.setUser(mainActivity.FileRead("user.txt", "user"));
+        bleManager.setUser(fileManager.FileRead("user.txt", "user"));
         bleManager.search();
 
         //スキャン後タイマー設定
