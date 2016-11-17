@@ -113,10 +113,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        //起動時ファイル読み込み
-        EditText et = (EditText) findViewById(R.id.editText);
-        assert et != null;
-        et.append(FileRead("user.txt", "user"));
 
         // Bluetoothサポートチェック
         final boolean isBluetoothSupported = bluetoothAdapter != null;
@@ -200,19 +196,9 @@ public class MainActivity extends Activity {
             }
         });
 
-        findViewById(R.id.savebutton).setOnClickListener(new View.OnClickListener() {
-            // このメソッドはクリックされる毎に呼び出される
-            public void onClick(View v) {
 
-                // ここにクリックされたときの処理を記述
-                EditText edit = (EditText) findViewById(R.id.editText);
-                assert edit != null;
-                FileWrite("user.txt", "user", edit.getText().toString());
-                Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
-                toast.show();
-            }
 
-        });
+
     }
     public void onDestroy() {
         // Advertiseの停止
@@ -236,33 +222,4 @@ public class MainActivity extends Activity {
         }
     }
 
-    public String removeString(String strSrc, String strRemove) {
-        Pattern pattern = Pattern.compile(strRemove);
-        Matcher matcher = pattern.matcher(strSrc);
-        String strTmp = matcher.replaceAll("");
-
-        return strTmp;
-    }
-
-    public String FileRead(String filename, String id){
-        try {Log.v("fileread","テスト1");
-            InputStream in = openFileInput(filename);
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String search;
-            while ((search = reader.readLine()) != null) {
-                if(search.startsWith(id)){
-                    Log.v("fileread",search);
-                    reader.close();
-                    return removeString(search,id+":");
-                }
-                Log.v("fileread","テスト２");
-            }
-            reader.close();
-            return "";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 }
