@@ -20,12 +20,9 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class FileManager {
-    private Context context;
-    FileManager(Context context){
-        this.context=context;
-    }
 
-    public void FileWrite(String filename, String id, String data){
+
+    public void FileWrite(String filename, String id, String data,Context context){
         try {
             OutputStream out = context.openFileOutput(filename, MODE_PRIVATE);
             PrintWriter writer =
@@ -48,7 +45,7 @@ public class FileManager {
         return strTmp;
     }
 
-    public String FileRead(String filename, String id){
+    public String FileRead(String filename, String id,Context context){
         try {Log.v("fileread","テスト1");
             InputStream in = context.openFileInput(filename);
             BufferedReader reader =

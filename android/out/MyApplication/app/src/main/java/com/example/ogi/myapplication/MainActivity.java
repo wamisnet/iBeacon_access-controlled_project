@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private int temporaryColorInt;
     BLEManager ble;
-    FileManager fileManager=new FileManager(getApplication());
+    FileManager fileManager=new FileManager();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
-        et.append(fileManager.FileRead("user.txt", "user"));
-        ble.setUser(fileManager.FileRead("user.txt", "user"));
+        et.append(fileManager.FileRead("user.txt", "user",getApplication()));
+        ble.setUser(fileManager.FileRead("user.txt", "user",getApplication()));
         assert scan_btn != null;
         scan_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
-                fileManager.FileWrite("user.txt", "user", edit.getText().toString());
-                ble.setUser(fileManager.FileRead("user.txt", "user"));
+                fileManager.FileWrite("user.txt", "user", edit.getText().toString(),getApplicationContext());
+                ble.setUser(fileManager.FileRead("user.txt", "user",getApplicationContext()));
                 Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
                 toast.show();
             }
