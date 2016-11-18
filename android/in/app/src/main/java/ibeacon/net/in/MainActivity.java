@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nifty.cloud.mb.core.FindCallback;
@@ -110,8 +112,12 @@ public class MainActivity extends Activity {
                 Toast.makeText(getApplicationContext(), selectedItem,
                         Toast.LENGTH_LONG).show();
                 classPosition=position;
+
+                final TextView textView = (TextView) findViewById(R.id.textView);
+                textView.setText("選択中の教室："+selectedItem);
             }
         });
+
 
 
         // Bluetoothサポートチェック
@@ -184,6 +190,9 @@ public class MainActivity extends Activity {
                 mBluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
                 Toast toast = Toast.makeText(getApplicationContext(), "送信開始します", Toast.LENGTH_SHORT);
                 toast.show();
+
+                final TextView textView = (TextView) findViewById(R.id.textView3);
+                textView.setText("BLE Status:[ON]");
             }
         });
 
@@ -193,6 +202,9 @@ public class MainActivity extends Activity {
                 mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
                 Toast toast = Toast.makeText(getApplicationContext(), "送信終了しました", Toast.LENGTH_SHORT);
                 toast.show();
+
+                final TextView textView = (TextView) findViewById(R.id.textView3);
+                textView.setText("BLE Status:[OFF]");
             }
         });
 
