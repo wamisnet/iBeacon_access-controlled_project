@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nifty.cloud.mb.core.FindCallback;
@@ -43,6 +45,9 @@ public class MainActivity extends Activity {
     private final String TAG = "mainActivity";
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
+    private int[] major;
+    private int[] minor;
+    private int classPosition;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,28 +56,9 @@ public class MainActivity extends Activity {
         BluetoothManager manager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter bluetoothAdapter = manager.getAdapter();
 
-        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
-                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
-//TestClassを検索するためのNCMBQueryインスタンスを作成
-        NCMBQuery<NCMBObject> query = new NCMBQuery<>("ClassRoom");
+        NCMB.initialize(getApplication(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+                "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
-//keyというフィールドがvalueとなっているデータを検索する条件を設定
-        query.whereEqualTo("major", "200");
-
-//データストアからデータを検索
-        query.findInBackground(new FindCallback<NCMBObject>() {
-            @Override
-            public void done(List<NCMBObject> results, NCMBException e) {
-                if (e != null) {
-                    Log.d("deta", "err");
-                    //検索失敗時の処理
-                } else {
-                    Log.d("deta", String.valueOf(results.get(0)));
-                    Log.d("deta", "end");
-                    //検索成功時の処理
-                }
-            }
-        });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item);
 
@@ -81,13 +67,39 @@ public class MainActivity extends Activity {
                 R.layout.custom_listview
         );
 
-        // ListViewの初期表示
-        adapter.add("Japan");
-        adapter.add("Tokyo");
-        adapter.add("Japan");
-        adapter.add("Tokyo");
-        adapter.add("Japan");
-        adapter.add("Tokyo");
+//TestClassを検索するためのNCMBQueryインスタンスを作成
+        NCMBQuery<NCMBObject> query = new NCMBQuery<>("ClassRoom");
+
+//keyというフィールドがvalueとなっているデータを検索する条件を設定
+        //query.whereEqualTo("major", "200");
+
+//データストアからデータを検索
+        query.findInBackground(new FindCallback<NCMBObject>() {
+            @Override
+            public void done(List<NCMBObject> objects, NCMBException e) {
+                if (e != null) {
+                    Log.d("query", "err");
+                    //検索失敗時の処理
+                } else {
+                    major=new int[objects.size()];
+                    minor=new int[objects.size()];
+                    for (int i = 0, n = objects.size(); i < n; i++) {
+                        NCMBObject o = objects.get(i);
+                        Log.i("NCMB", o.getString("room_name"));
+
+                        String name = o.getString("room_name");
+                        minor[i] = o.getInt("minor");
+                        major[i] = o.getInt("major");
+                        adapter.add(name + " 教室");
+                    }
+                    //Log.d("deta", String.valueOf(results.get(0)));
+                    Log.d("deta", "end");
+                    //検索成功時の処理
+                }
+            }
+        });
+
+
 
         _listView.setAdapter(adapter);
         _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -99,13 +111,14 @@ public class MainActivity extends Activity {
                 String selectedItem = (String) list.getItemAtPosition(position);
                 Toast.makeText(getApplicationContext(), selectedItem,
                         Toast.LENGTH_LONG).show();
+                classPosition=position;
+
+                final TextView textView = (TextView) findViewById(R.id.textView);
+                textView.setText("選択中の教室："+selectedItem);
             }
         });
 
-        //起動時ファイル読み込み
-        EditText et = (EditText) findViewById(R.id.editText);
-        assert et != null;
-        et.append(FileRead("user.txt", "user"));
+
 
         // Bluetoothサポートチェック
         final boolean isBluetoothSupported = bluetoothAdapter != null;
@@ -127,56 +140,59 @@ public class MainActivity extends Activity {
             Log.d(TAG, "errorMessage Bluetooth Low Enerey Advertise非サポート時の処理をしてください");
             return;
         }
-        // 以下はAdvertiseSettings
-        // 何も指定しないと、
-        // モード（ADVERTISE_MODE_LOW_POWER）、TxPowerLevel（ADVERTISE_TX_POWER_MEDIUM）、タイムアウト(0)、Connectable(true)
-        // が設定されます。
-        final AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
-        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
-        settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM);
-        settingsBuilder.setTimeout(0);
-        settingsBuilder.setConnectable(true);
 
-        // 以下はAdvertiseData
-        // 1-5バイト目のフラグはAdvertiseSettingsのsetConnectable(true)で行われています
-        // 6-7バイト目の会社コードはaddManufactureDataで後ほど構築します
-        // なので残りの23バイトをByteBufferを用いて構築します
-        final byte[] manufacturerData = new byte[23];
-        ByteBuffer byteBuffer = ByteBuffer.wrap(manufacturerData);
-        byteBuffer.order(ByteOrder.BIG_ENDIAN);
-        // iBeacon固定値(8バイト目)
-        byteBuffer.put((byte) 0x02);
-        // iBeaconのデータバイト数(9バイト目)
-        byteBuffer.put((byte) 0x15);
-
-        // UUID（10―25バイト目）
-        final UUID uuid = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-        // 上位64ビットを追加
-        byteBuffer.putLong(uuid.getMostSignificantBits());
-        // 下位64ビットを追加
-        byteBuffer.putLong(uuid.getLeastSignificantBits());
-
-        // major(26-27バイト目)
-        byteBuffer.putShort((short) 0x0A);
-        // minor(28-29バイト目)
-        byteBuffer.putShort((short) 0x1F);
-        // 電波強度を表す2の補数(30バイト目)
-        byteBuffer.put((byte) 0x99);
-
-        // 会社コード(6-7バイト目)
-        final int appleManufactureId = 0x004C;
-        // AdvertiseData作成
-        final AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        dataBuilder.addManufacturerData(appleManufactureId, manufacturerData);
-        mAdvertiseCallback = new IBeaconAdvertiseCallback();
 
         findViewById(R.id.startble_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 以下はAdvertiseSettings
+                // 何も指定しないと、
+                // モード（ADVERTISE_MODE_LOW_POWER）、TxPowerLevel（ADVERTISE_TX_POWER_MEDIUM）、タイムアウト(0)、Connectable(true)
+                // が設定されます。
+                final AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
+                settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
+                settingsBuilder.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM);
+                settingsBuilder.setTimeout(0);
+                settingsBuilder.setConnectable(true);
 
+                // 以下はAdvertiseData
+                // 1-5バイト目のフラグはAdvertiseSettingsのsetConnectable(true)で行われています
+                // 6-7バイト目の会社コードはaddManufactureDataで後ほど構築します
+                // なので残りの23バイトをByteBufferを用いて構築します
+                final byte[] manufacturerData = new byte[23];
+                ByteBuffer byteBuffer = ByteBuffer.wrap(manufacturerData);
+                byteBuffer.order(ByteOrder.BIG_ENDIAN);
+                // iBeacon固定値(8バイト目)
+                byteBuffer.put((byte) 0x02);
+                // iBeaconのデータバイト数(9バイト目)
+                byteBuffer.put((byte) 0x15);
+
+                // UUID（10―25バイト目）
+                final UUID uuid = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+                // 上位64ビットを追加
+                byteBuffer.putLong(uuid.getMostSignificantBits());
+                // 下位64ビットを追加
+                byteBuffer.putLong(uuid.getLeastSignificantBits());
+
+                // major(26-27バイト目)
+                byteBuffer.putShort((short) major[classPosition]);
+                // minor(28-29バイト目)
+                byteBuffer.putShort((short) minor[classPosition]);
+                // 電波強度を表す2の補数(30バイト目)
+                byteBuffer.put((byte) 0x99);
+
+                // 会社コード(6-7バイト目)
+                final int appleManufactureId = 0x004C;
+                // AdvertiseData作成
+                final AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
+                dataBuilder.addManufacturerData(appleManufactureId, manufacturerData);
+                mAdvertiseCallback = new IBeaconAdvertiseCallback();
                 mBluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), mAdvertiseCallback);
                 Toast toast = Toast.makeText(getApplicationContext(), "送信開始します", Toast.LENGTH_SHORT);
                 toast.show();
+
+                final TextView textView = (TextView) findViewById(R.id.textView3);
+                textView.setText("BLE Status:[ON]");
             }
         });
 
@@ -184,25 +200,17 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
-                mBluetoothLeAdvertiser = null;
                 Toast toast = Toast.makeText(getApplicationContext(), "送信終了しました", Toast.LENGTH_SHORT);
                 toast.show();
+
+                final TextView textView = (TextView) findViewById(R.id.textView3);
+                textView.setText("BLE Status:[OFF]");
             }
         });
 
-        findViewById(R.id.savebutton).setOnClickListener(new View.OnClickListener() {
-            // このメソッドはクリックされる毎に呼び出される
-            public void onClick(View v) {
 
-                // ここにクリックされたときの処理を記述
-                EditText edit = (EditText) findViewById(R.id.editText);
-                assert edit != null;
-                FileWrite("user.txt", "user", edit.getText().toString());
-                Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
-                toast.show();
-            }
 
-        });
+
     }
     public void onDestroy() {
         // Advertiseの停止
@@ -226,33 +234,4 @@ public class MainActivity extends Activity {
         }
     }
 
-    public String removeString(String strSrc, String strRemove) {
-        Pattern pattern = Pattern.compile(strRemove);
-        Matcher matcher = pattern.matcher(strSrc);
-        String strTmp = matcher.replaceAll("");
-
-        return strTmp;
-    }
-
-    public String FileRead(String filename, String id){
-        try {Log.v("fileread","テスト1");
-            InputStream in = openFileInput(filename);
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String search;
-            while ((search = reader.readLine()) != null) {
-                if(search.startsWith(id)){
-                    Log.v("fileread",search);
-                    reader.close();
-                    return removeString(search,id+":");
-                }
-                Log.v("fileread","テスト２");
-            }
-            reader.close();
-            return "";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 }
