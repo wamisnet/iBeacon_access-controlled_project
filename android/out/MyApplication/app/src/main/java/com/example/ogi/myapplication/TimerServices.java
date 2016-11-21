@@ -29,8 +29,8 @@ public class TimerServices extends IntentService {
 
     int StartHour[] = {9,11,13,15,0};
     int StartTime[] = {21,01,21,01,00};
-    private static int dStartHour[] = {9,9,15,15,0};//デバッグ用
-    private static int dStartTime[] = {30,45,10,49,00};
+    private static int dStartHour[] = {9,9,9,9,0};//デバッグ用
+    private static int dStartTime[] = {8,10,13,15,00};
 
    // private static int dStartHour[] = {10,10,10,10,0};//デバッグ用
    // private static int dStartTime[] = {30,45,50,55,00};

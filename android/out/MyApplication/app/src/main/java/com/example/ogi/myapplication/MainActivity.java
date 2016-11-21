@@ -1,9 +1,15 @@
 package com.example.ogi.myapplication;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,14 +34,17 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private int temporaryColorInt;
     BLEManager ble;
-    FileManager fileManager=new FileManager();
+    FileManager fileManager = new FileManager();
+    private static final String TAG = "M Permission";
+    private int REQUEST_CODE_LOCATE = 0x01;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // AlarmManager を開始する
         TimerServices.startAlarm(getApplicationContext());
-        ble=new BLEManager(this);
+        ble = new BLEManager(this);
         ble.init();
         //Mbaasを使用する為のAPIとキー↓
         NCMB.initialize(getApplication(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
@@ -46,12 +55,18 @@ public class MainActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         assert progressBar != null;
         progressBar.setVisibility(View.GONE);
-
+        // パーミッションを持っているか確認する
+        if (PermissionChecker.checkSelfPermission(
+                MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // パーミッションをリクエストする
+            requestLocatePermission();
+        }
 
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
-        et.append(fileManager.FileRead("user.txt", "user",getApplication()));
-        ble.setUser(fileManager.FileRead("user.txt", "user",getApplication()));
+        et.append(fileManager.FileRead("user.txt", "user", getApplication()));
+        ble.setUser(fileManager.FileRead("user.txt", "user", getApplication()));
         assert scan_btn != null;
         scan_btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -75,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-               setProgressTime(5000,progressBar);
+                setProgressTime(5000, progressBar);
                 ble.search();
-               //
+                //
             }
         });
         assert save_btn != null;
@@ -111,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
                 // ここにクリックされたときの処理を記述
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
-                fileManager.FileWrite("user.txt", "user", edit.getText().toString(),getApplicationContext());
-                ble.setUser(fileManager.FileRead("user.txt", "user",getApplicationContext()));
+                fileManager.FileWrite("user.txt", "user", edit.getText().toString(), getApplicationContext());
+                ble.setUser(fileManager.FileRead("user.txt", "user", getApplicationContext()));
                 Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -121,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setProgressTime(int time, final ProgressBar mprogressBar){
+    private void setProgressTime(int time, final ProgressBar mprogressBar) {
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -131,5 +146,81 @@ public class MainActivity extends AppCompatActivity {
         }, time);
         mprogressBar.setVisibility(View.VISIBLE);
     }
-}
 
+    private void requestLocatePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            Log.d(TAG, "shouldShowRequestPermissionRationale:追加説明");
+            // 権限チェックした結果、持っていない場合はダイアログを出す
+            new AlertDialog.Builder(this)
+                    .setTitle("パーミッションの追加説明")
+                    .setMessage("このアプリを使用するには位置情報が必要です")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    REQUEST_CODE_LOCATE);
+                        }
+                    })
+                    .create()
+                    .show();
+            return;
+        }
+
+        // 権限を取得する
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        }, REQUEST_CODE_LOCATE);
+        return;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        if (requestCode == REQUEST_CODE_LOCATE) {
+            if (grantResults.length != 1 ||
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "onRequestPermissionsResult:DENYED");
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    Log.d(TAG, "[show error]");
+                    new AlertDialog.Builder(this)
+                            .setTitle("パーミッション取得エラー")
+                            .setMessage("再試行する場合は、アプリを再起動してください")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // サンプルのため、今回はもう一度操作をはさんでいますが
+                                    // ここでrequestLocatePermissionメソッドの実行でもよい
+                                }
+                            })
+                            .create()
+                            .show();
+
+                } else {
+                    Log.d(TAG, "[show app settings guide]");
+                    new AlertDialog.Builder(this)
+                            .setTitle("パーミッション取得エラー")
+                            .setMessage("今後は許可しないが選択されました。アプリ設定＞権限をチェックしてください（権限をON/OFFすることで状態はリセットされます）")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //   openSettings();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+            } else {
+                Log.d(TAG, "onRequestPermissionsResult:GRANTED");
+                // 許可された
+            }
+        } else {
+            // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+}
