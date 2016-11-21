@@ -29,21 +29,45 @@
             android:gravity="center"
             android:layout_marginTop="5dp" />
 
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="60dp"
-            android:id="@+id/EditText"
-            android:maxWidth="50dp"
-            android:hint="@string/gakuseki"
-            android:textColorHint="#ff0000"
-            android:textColor="#ff0000"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:textIsSelectable="false"
-            android:theme="@style/EditTextColorControl"
-            android:layout_marginTop="20dp"
-            android:maxLength="6"
-            android:inputType="textVisiblePassword" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/linearLayout3"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.15">
+
+            <ListView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:fadeScrollbars="false"
+                tools:ignore="NestedWeights"
+                android:background="#efefef" />
+
+            <EditText
+                android:layout_width="181dp"
+                android:layout_height="60dp"
+                android:id="@+id/EditText"
+                android:maxWidth="50dp"
+                android:hint="@string/gakuseki"
+                android:textColorHint="#ff0000"
+                android:textColor="#ff0000"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:textIsSelectable="false"
+                android:theme="@style/EditTextColorControl"
+                android:layout_marginTop="20dp"
+                android:maxLength="3"
+                android:layout_weight="1"
+                tools:ignore="NestedWeights"
+                android:layout_marginLeft="20dp"
+                android:inputType="number"
+                android:background="#efefef" />
+
+        </LinearLayout>
+
         <!--android:background="#ffffff"-->
 
         <Button
@@ -95,21 +119,12 @@
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
+            style="@android:style/Widget.Material.Light.ProgressBar"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="50dp"
-            android:layout_weight="0.02" />
+            android:layout_weight="0.02"
+            tools:ignore="NewApi" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentStart="false"
-        android:id="@+id/linearLayout3"
-        android:layout_marginTop="10dp">
     </LinearLayout>
 
 </RelativeLayout>
