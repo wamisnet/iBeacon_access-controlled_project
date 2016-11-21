@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">in</string>
-    <string name="教室番号">教室番号</string>
+    <string name="教室リスト">教室リスト</string>
     <string name="ble_start">BLE　Start</string>
-    <string name="Transmitter">Transmitter</string>
+    <string name="BLE">講師用発信アプリ</string>
     <string name="Save">Save</string>
     <string name="edit">教室番号を入力してください</string>
     <string name="ble_stop">BLE STOP</string>
+    <string name="select">教室を選択してください</string>
 </resources>

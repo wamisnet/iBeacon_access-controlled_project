@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:weightSum="1">
@@ -9,56 +10,46 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/教室番号"
+        android:text="@string/教室リスト"
         android:textSize="50sp"
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal"
         android:textStyle="normal"
         android:textColor="#696969"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp" />
 
-    <ListView
-        android:id="@+id/list_item"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:paddingBottom="20dp"
+        android:background="@drawable/pink_gradient"
+        android:layout_height="180dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp">
+
+        <ListView
+            android:id="@+id/list_item"
+            android:layout_width="match_parent"
+            android:layout_marginRight="5dp"
+            android:textColor="#000000"
+            android:fadeScrollbars="false"
+            style="@style/Widget.AppCompat.Light.ListView.DropDown"
+            android:scrollbars="horizontal|vertical"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <TextView
+        android:text="@string/select"
+        android:layout_width="match_parent"
+        android:id="@+id/textView"
+        android:layout_height="70dp"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp"
-        android:textColor="#000000"
-        style="@style/Widget.AppCompat.Light.ListView.DropDown"
-        android:scrollbars="horizontal|vertical"
-        android:layout_height="200dp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:id="@+id/editText"
-        android:inputType="textVisiblePassword|textNoSuggestions|none"
-        android:layout_marginTop="40dp"
-        android:textSize="20sp"
-        android:textColorHint="#ff0000"
-        android:layout_weight="0.14"
-        android:hint="@string/edit"
-        android:textStyle="normal"
-        android:textColor="#0000ff"
-        android:maxLength="10"
-        android:paddingBottom="20dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp" />
-
-
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:text="@string/Save"
-        android:id="@+id/savebutton"
-        android:layout_marginTop="50dp"
-        android:textSize="30sp"
-        android:layout_weight="0.50"
-        android:layout_gravity="center_horizontal"
-        android:textStyle="normal"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp" />
+        android:layout_marginTop="20dp"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:paddingTop="20dp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -73,7 +64,8 @@
             android:layout_marginTop="70dp"
             android:layout_weight="0.50"
             android:textSize="30sp"
-            android:layout_marginLeft="80dp" />
+            android:layout_marginLeft="80dp"
+            tools:ignore="RtlHardcoded" />
 
         <Space
             android:layout_width="wrap_content"
@@ -88,7 +80,19 @@
             android:layout_weight="0.91"
             android:layout_marginTop="70dp"
             android:layout_marginRight="80dp"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            tools:ignore="RtlHardcoded" />
     </LinearLayout>
+
+    <TextView
+        android:text="BLE Status:[OFF]"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/textView3"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
 </LinearLayout>
