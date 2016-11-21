@@ -1,8 +1,13 @@
 package ibeacon.net.print;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
@@ -10,38 +15,115 @@ import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
+    private ArrayAdapter<String> adapter = null;
+    private ListView _listView = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        NCMB.initialize(this.getApplicationContext(),"8eee2292f5c87bae5ec5bbb3bdb95ee997708bd1bc96aed8f8ed6f142ce71e61",
-                "29aea4c9781e3664e4f9c959c2e04074ab3f765c74586ed447947699a5385970");
+        NCMB.initialize(this.getApplicationContext(),"fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+                "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
+        findViewById(R.id.reload).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pushReload();
+            }
+        });
+        // LayoutファイルのListViewのリソースID
+        _listView = (ListView) findViewById(R.id.list_item);
+        adapter = new ArrayAdapter<String>(getApplicationContext(),
+                R.layout.custom_listview
+        );
+    }
+    private void pushReload(){
         //TestClassを検索するためのNCMBQueryインスタンスを作成
-        NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");
-
-//keyというフィールドがvalueとなっているデータを検索する条件を設定
-        query.whereEqualTo("major", "65000");
-
-//データストアからデータを検索
+        NCMBQuery<NCMBObject> query = new NCMBQuery<>("Gakkyu");//AttendClass
+        //データストアからデータを検索
         query.findInBackground(new FindCallback<NCMBObject>() {
             @Override
-            public void done(List<NCMBObject> results, NCMBException e) {
+            public void done(List<NCMBObject> objects, NCMBException e) {
                 if (e != null) {
-                    Log.d("deta", "err end");
+                    Log.d("NCMBQuery", "err:"+String.valueOf(e));
                     //検索失敗時の処理
                 } else {
-                  Log.d("deta", String.valueOf(results.get(0)));
-                    Log.d("deta", "end");
-                    //検索成功時の処理
+                    String[] name=new String[objects.size()];
+                    String[] id=new String[objects.size()];
+                    for (int i = 0, n = objects.size(); i < n; i++) {
+                        NCMBObject o = objects.get(i);
+                        //Log.i("NCMB", o.getString("Gakkyu_name"));
+                        id[i] = o.getString("Gakkyu_ID");
+                        name[i] = o.getString("Gakkyu_name");
+
+                    }
+                   showdDialog(name,id);
                 }
             }
         });
+    }
+    private void showdDialog(String[] items, final String[] id){
+        int defaultItem = 0; // デフォルトでチェックされているアイテム
+        final List<Integer> checkedItems = new ArrayList<>();
+        checkedItems.add(defaultItem);
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Class Selector")
+                .setSingleChoiceItems(items, defaultItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkedItems.clear();
+                        checkedItems.add(which);
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!checkedItems.isEmpty()) {
+                            Log.d("checkedItem:", "" + checkedItems.get(0));
+                            Log.d("checkedItemSrect:", "" + id[checkedItems.get(0)]);
+                            setNowClass(id[checkedItems.get(0)]);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    private void setNowClass(String id){
+        //TestClassを検索するためのNCMBQueryインスタンスを作成
+        NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
+        //データストアからデータを検索
+        //query.whereEqualTo("Gakkyu_ID", id);
 
+        query.addOrderByDescending("attend");
+        query.addOrderByDescending("createDate");
+        query.findInBackground(new FindCallback<NCMBObject>() {
+            @Override
+            public void done(List<NCMBObject> objects, NCMBException e) {
+                if (e != null) {
+                    Log.d("NCMBQuery", "err:"+String.valueOf(e));
+                    //検索失敗時の処理
+                } else {
+                    String[] name=new String[objects.size()];
+                    String[] id=new String[objects.size()];
+                    String userName="",user;
+                    for (int i = 0, n = objects.size(); i < n; i++) {
+                        NCMBObject o = objects.get(i);
+                        Log.i("NCMB", o.getString("attend")+":"+ o.getString("createDate"));
+                        user=o.getString("attend");
+                        if(!userName.equals(user)){
+                            userName=o.getString("attend");
+                            adapter.add(o.getString("attend"));
+                        }
+                        //id[i] = o.getString("Gakkyu_ID");
+                        //name[i] = o.getString("Gakkyu_name");
 
+                    }
+                    _listView.setAdapter(adapter);
+                }
+            }
+        });
     }
 }
