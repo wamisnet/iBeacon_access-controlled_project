@@ -44,7 +44,9 @@
                 android:layout_weight="1"
                 android:fadeScrollbars="false"
                 tools:ignore="NestedWeights"
-                android:background="#efefef" />
+                android:background="#efefef"
+                android:id="@+id/list_item"/>
+
 
             <EditText
                 android:layout_width="181dp"

@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.nifty.cloud.mb.core.DoneCallback;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
@@ -92,6 +94,8 @@ public class BLEManager {
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb")) {
                     if (flag == 0) {
                         Log.d("BLEManagerget.ScanData()", "同一のUUIDを検知しました");
+                        Toast toast = Toast.makeText(context, "信号をじゅしんしました。", Toast.LENGTH_SHORT);
+                        toast.show();
                         //サーバへ送信
                         final NCMBObject obj = new NCMBObject("AttendClass");
                         obj.put("attend",mUser);
