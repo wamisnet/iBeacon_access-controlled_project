@@ -106,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("NCMBQuery", "err:"+String.valueOf(e));
                     //検索失敗時の処理
                 } else {
-                    String[] name=new String[objects.size()];
-                    String[] id=new String[objects.size()];
+                    adapter = new ArrayAdapter<String>(getApplicationContext(),
+                            R.layout.custom_listview
+                    );
                     String userName="",user;
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
