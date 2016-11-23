@@ -33,90 +33,43 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private int temporaryColorInt;
-    BLEManager ble;
+    BLEManager bleManager = new BLEManager(this);
     FileManager fileManager = new FileManager();
-    private static final String TAG = "M Permission";
-    private int REQUEST_CODE_LOCATE = 0x01;
+    PermissionManager permissionManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setProgressTime(0);
         // AlarmManager を開始する
         TimerServices.startAlarm(getApplicationContext());
-        ble = new BLEManager(this);
-        ble.init();
+        permissionManager = new PermissionManager(getApplicationContext(),this);
+        bleManager.init();
         //Mbaasを使用する為のAPIとキー↓
         NCMB.initialize(getApplication(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
                 "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
         // ボタンのオブジェクトを取得
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        assert progressBar != null;
-        progressBar.setVisibility(View.GONE);
-        // パーミッションを持っているか確認する
-        if (PermissionChecker.checkSelfPermission(
-                MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // パーミッションをリクエストする
-            requestLocatePermission();
-        }
+        permissionManager.PermissionCheck();
 
         EditText et = (EditText) findViewById(R.id.EditText);
         assert et != null;
         et.append(fileManager.FileRead("user.txt", "user", getApplication()));
-        ble.setUser(fileManager.FileRead("user.txt", "user", getApplication()));
+        bleManager.setUser(fileManager.FileRead("user.txt", "user", getApplication()));
         assert scan_btn != null;
-        scan_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        ColorDrawable colorDrawable = (ColorDrawable) v.getBackground();
-                        temporaryColorInt = colorDrawable.getColor();
-                        float[] hsv = new float[3];
-                        Color.colorToHSV(colorDrawable.getColor(), hsv);
-                        hsv[2] -= 0.2f;
-                        v.setBackgroundColor(Color.HSVToColor(hsv));
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        v.setBackgroundColor(temporaryColorInt);
-                        break;
-                }
-                return false;
-            }
-        });
+        pushSw(scan_btn);
 
         scan_btn.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                setProgressTime(5000, progressBar);
-                ble.search();
-                //
+                setProgressTime(2000);
+                bleManager.search();
             }
         });
+        pushSw(save_btn);
         assert save_btn != null;
-        save_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
 
-                        ColorDrawable colorDrawable = (ColorDrawable) v.getBackground();
-                        temporaryColorInt = colorDrawable.getColor();
-                        float[] hsv = new float[3];
-                        Color.colorToHSV(colorDrawable.getColor(), hsv);
-                        hsv[2] -= 0.2f;
-                        v.setBackgroundColor(Color.HSVToColor(hsv));
-
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        v.setBackgroundColor(temporaryColorInt);
-                        break;
-                }
-                return false;
-            }
-        });
 
         // クリックイベントを受け取れるようにする
         save_btn.setOnClickListener(new OnClickListener() {
@@ -127,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 EditText edit = (EditText) findViewById(R.id.EditText);
                 assert edit != null;
                 fileManager.FileWrite("user.txt", "user", edit.getText().toString(), getApplicationContext());
-                ble.setUser(fileManager.FileRead("user.txt", "user", getApplicationContext()));
+                bleManager.setUser(fileManager.FileRead("user.txt", "user", getApplicationContext()));
                 Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -136,91 +89,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setProgressTime(int time, final ProgressBar mprogressBar) {
+    private void setProgressTime(int time) {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        assert progressBar != null;
+        progressBar.setVisibility(View.GONE);
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mprogressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
             }
         }, time);
-        mprogressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
-
-    private void requestLocatePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
-
-            Log.d(TAG, "shouldShowRequestPermissionRationale:追加説明");
-            // 権限チェックした結果、持っていない場合はダイアログを出す
-            new AlertDialog.Builder(this)
-                    .setTitle("パーミッションの追加説明")
-                    .setMessage("このアプリを使用するには位置情報が必要です")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                                    REQUEST_CODE_LOCATE);
-                        }
-                    })
-                    .create()
-                    .show();
-            return;
-        }
-
-        // 権限を取得する
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.ACCESS_COARSE_LOCATION
-        }, REQUEST_CODE_LOCATE);
-        return;
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-
-        if (requestCode == REQUEST_CODE_LOCATE) {
-            if (grantResults.length != 1 ||
-                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "onRequestPermissionsResult:DENYED");
-
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    Log.d(TAG, "[show error]");
-                    new AlertDialog.Builder(this)
-                            .setTitle("パーミッション取得エラー")
-                            .setMessage("再試行する場合は、アプリを再起動してください")
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    // サンプルのため、今回はもう一度操作をはさんでいますが
-                                    // ここでrequestLocatePermissionメソッドの実行でもよい
-                                }
-                            })
-                            .create()
-                            .show();
-
-                } else {
-                    Log.d(TAG, "[show app settings guide]");
-                    new AlertDialog.Builder(this)
-                            .setTitle("パーミッション取得エラー")
-                            .setMessage("今後は許可しないが選択されました。アプリ設定＞権限をチェックしてください（権限をON/OFFすることで状態はリセットされます）")
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //   openSettings();
-                                }
-                            })
-                            .create()
-                            .show();
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        permissionManager.RequestPermissionsResult(requestCode,permissions,grantResults);
+    }
+    private void pushSw(Button button){
+        button.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        ColorDrawable colorDrawable = (ColorDrawable) v.getBackground();
+                        temporaryColorInt = colorDrawable.getColor();
+                        float[] hsv = new float[3];
+                        Color.colorToHSV(colorDrawable.getColor(), hsv);
+                        hsv[2] -= 0.2f;
+                        v.setBackgroundColor(Color.HSVToColor(hsv));
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.setBackgroundColor(temporaryColorInt);
+                        break;
                 }
-            } else {
-                Log.d(TAG, "onRequestPermissionsResult:GRANTED");
-                // 許可された
+                return false;
             }
-        } else {
-            // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        });
     }
 }
