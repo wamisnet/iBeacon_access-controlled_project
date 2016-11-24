@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">print</string>
+    <string name="app_name">講師用表示アプリ</string>
+    <string name="reload">ここをタップしてクラスを選択してください</string>
 </resources>
