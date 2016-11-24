@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void showdDialog(String[] items, final String[] id){
+    private void showdDialog(final String[] items, final String[] id){
         int defaultItem = 0; // デフォルトでチェックされているアイテム
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
@@ -84,18 +84,18 @@ public class MainActivity extends AppCompatActivity {
                         if (!checkedItems.isEmpty()) {
                             Log.d("checkedItem:", "" + checkedItems.get(0));
                             Log.d("checkedItemSrect:", "" + id[checkedItems.get(0)]);
-                            setNowClass(id[checkedItems.get(0)]);
+                            setNowClass(id[checkedItems.get(0)],items[checkedItems.get(0)]);
                         }
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-    private void setNowClass(String id){
+    private void setNowClass(String id, final String name){
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
-        //query.whereEqualTo("Gakkyu_ID", id);
+        query.whereEqualTo("Gakkyu_ID", id);
 
         query.addOrderByDescending("attend");
         query.addOrderByDescending("createDate");
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         user=o.getString("attend");
                         if(!userName.equals(user)){
                             userName=o.getString("attend");
-                            adapter.add(o.getString("attend"));
+                            adapter.add(name+o.getString("attend"));
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
