@@ -54,13 +54,14 @@ public class MainActivity extends AppCompatActivity {
         pushSw(save_btn);
 
             //権限チェック
-        permissionManager = new PermissionManager(getApplicationContext(),this);
+        permissionManager = new PermissionManager(this,MainActivity.this);
         permissionManager.PermissionCheck();
             // AlarmManager を開始する
         TimerServices.startAlarm(getApplicationContext());
             //BLEManagerの初期化
         bleManager.init();
         bleManager.setUser(fileManager.FileRead("user.txt", "user", getApplication()));
+        bleManager.setUserID(fileManager.FileRead("user.txt", "ID",getApplicationContext()));
             //edittextに文字を挿入
         et.append(fileManager.FileRead("user.txt", "user", getApplication()));
         //Mbaasを使用する為のAPIキー
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setProgressTime(2000);
                 bleManager.search();
+                Toast toast = Toast.makeText(getApplicationContext(), "sc"+fileManager.FileRead("user.txt", "ID",getApplicationContext()), Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
@@ -182,8 +185,10 @@ public class MainActivity extends AppCompatActivity {
                 String selectedItem = (String) list.getItemAtPosition(position);
                 Toast.makeText(getApplicationContext(), selectedItem,
                         Toast.LENGTH_LONG).show();
-                fileManager.FileWrite("user.txt","user",name[position],getApplicationContext());
-                fileManager.FileWrite("user.txt","userID",userid[position],getApplicationContext());
+                //fileManager.FileWrite("user.txt","user",name[position],getApplicationContext());
+                fileManager.FileWrite("user.txt","ID",userid[position],getApplicationContext());
+                Toast.makeText(getApplicationContext(), userid[position],
+                        Toast.LENGTH_LONG).show();
             }
         });
     }

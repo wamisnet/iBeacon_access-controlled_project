@@ -19,7 +19,9 @@ import com.nifty.cloud.mb.core.NCMBObject;
 public class BLEManager {
     private Context context;
     private String mUser;
+    private String mid;
     public void setUser(String user){mUser=user;}
+    public void setUserID(String userID){mid=userID;}
     public BLEManager(Context context){
         this.context = context;
     }
@@ -94,11 +96,12 @@ public class BLEManager {
                 if (uuid.equals("00ffe0-00-100-800-0805f9b34fb")) {
                     if (flag == 0) {
                         Log.d("BLEManagerget.ScanData()", "同一のUUIDを検知しました");
-                        Toast toast = Toast.makeText(context, "信号をじゅしんしました。", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(context, "信号を受信しました。"+mid, Toast.LENGTH_SHORT);
                         toast.show();
                         //サーバへ送信
                         final NCMBObject obj = new NCMBObject("AttendClass");
                         obj.put("attend",mUser);
+                        obj.put("Gakkyu_ID",mid);
                         try {
                             obj.increment("incrementKey", 1);
                         } catch (NCMBException e) {
