@@ -19,7 +19,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
-
+    int compH[] = {9,11,13,15};
+    int compT[] = {23,03,23,03};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
                         if (!userName.equals(user)) {
                             userName = o.getString("attend");
                             adapter.add(name + o.getString("attend"));
+                            for(int ii = 0; ii < 3; ii++) {
+
+                            }
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
