@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import java.util.Calendar;
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
@@ -21,6 +21,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
+    Calendar cal = Calendar.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,11 +114,17 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
                         Log.i("NCMB", o.getString("attend")+":"+ o.getString("createDate"));
+                        Log.d("time",(o.getString("createDate")));
                         user=o.getString("attend");
                         if(!userName.equals(user)){
                             userName=o.getString("attend");
+                            for(int ii=0;)
+
+                            if(testobj)<compH[ii]
                             adapter.add(name+o.getString("attend"));
                         }
+
+
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
 
