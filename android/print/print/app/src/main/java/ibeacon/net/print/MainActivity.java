@@ -1,6 +1,7 @@
 package ibeacon.net.print;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,8 +20,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
+
     int compH[] = {9,11,13,15};
     int compT[] = {23,03,23,03};
+
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.reload).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pushReload();
+                pushProgress();
+
             }
         });
         // LayoutファイルのListViewのリソースID
@@ -39,6 +45,16 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(getApplicationContext(),
                 R.layout.custom_listview
         );
+    }
+    private void pushProgress(){
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("教室を検索中");
+        progressDialog.setMessage("インターネットに接続してデータベースを検索しています。");
+        //progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        pushReload();
     }
     private void pushReload(){
         //TestClassを検索するためのNCMBQueryインスタンスを作成
@@ -60,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                         name[i] = o.getString("Gakkyu_name");
 
                     }
+                    progressDialog.dismiss();
                    showdDialog(name,id);
                 }
             }
