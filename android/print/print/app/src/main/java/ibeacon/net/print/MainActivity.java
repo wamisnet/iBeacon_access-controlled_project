@@ -103,20 +103,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
                 if (e != null) {
-                    Log.d("NCMBQuery", "err:"+String.valueOf(e));
+                    Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
                 } else {
                     adapter = new ArrayAdapter<String>(getApplicationContext(),
                             R.layout.custom_listview
                     );
-                    String userName="",user;
+                    String userName = "", user;
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        Log.i("NCMB", o.getString("attend")+":"+ o.getString("createDate"));
-                        user=o.getString("attend");
-                        if(!userName.equals(user)){
-                            userName=o.getString("attend");
-                            adapter.add(name+o.getString("attend"));
+                        Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
+                        user = o.getString("attend");
+                        for(int l=1;l<=6;l++)
+                        Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
+                        if (!userName.equals(user)) {
+                            userName = o.getString("attend");
+                            adapter.add(name + o.getString("attend"));
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
@@ -127,4 +129,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    String tmpString;
+
+    private int getTime(int mode, String createTime) {
+        int index,indexaf;
+
+        if(mode==1) {//year
+            return Integer.parseInt(createTime.substring(0, 4));
+        }
+        index=createTime.indexOf("-");
+        index=createTime.indexOf("-",index+1);
+        if(mode==2) {//mon
+            return Integer.parseInt(createTime.substring(5, index));
+        }
+        indexaf=createTime.indexOf("T",index+1);
+        if (mode == 3) {//day
+            return Integer.parseInt(createTime.substring(index+1, indexaf));
+        }
+        index=createTime.indexOf(":",indexaf+1);
+        if(mode==4){//h
+            return Integer.parseInt(createTime.substring(indexaf+1, index))+9;
+        }
+        indexaf=createTime.indexOf(":",index+1);
+        if(mode==5){//m
+            return Integer.parseInt(createTime.substring(index+1, indexaf));
+        }
+        index=createTime.indexOf(".",indexaf+1);
+        if(mode==6){//s
+            return Integer.parseInt(createTime.substring(indexaf+1, index));
+        }
+        return Integer.parseInt(createTime);
+    }
+
+
 }
