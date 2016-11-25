@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">iBeacon_receiver</string>
+    <string name="app_name">生徒用受信アプリ</string>
     <string name="title">出席管理program</string>
     <string name="gakuseki">学籍番号下3桁入力</string>
     <string name="ibeaconstatus">iBeaconStatus</string>
