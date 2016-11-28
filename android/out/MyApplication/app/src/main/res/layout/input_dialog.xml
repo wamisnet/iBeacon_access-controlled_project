@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/dialog_textview"
+        android:inputType="number"
+        android:layout_height="wrap_content"
+        android:text="input_text"
+        android:gravity="left"
+        android:layout_marginLeft="10dip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="50dp"
+        android:textAlignment="viewEnd" />
+
+    <EditText
+        android:id="@+id/dialog_edittext"
+
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:scrollHorizontally="true"
+        android:gravity="fill_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_weight="1" />
+    </LinearLayout>

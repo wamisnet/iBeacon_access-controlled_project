@@ -4,6 +4,6 @@
     <string name="gakuseki">学籍番号下3桁入力</string>
     <string name="ibeaconstatus">iBeaconStatus</string>
     <string name="Scan">Scan</string>
-    <string name="hozon">保存</string>
+    <string name="hozon">変更</string>
     <string name="gazo">gazo</string>
 </resources>

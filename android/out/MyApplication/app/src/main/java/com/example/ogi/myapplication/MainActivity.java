@@ -1,10 +1,16 @@
 package com.example.ogi.myapplication;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,15 +29,18 @@ import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     private int temporaryColorInt;
     BLEManager bleManager = new BLEManager(this);
-    FileManager fileManager = new FileManager();
     PermissionManager permissionManager;
-
+    DialogManager dialogManager = new DialogManager(this);
+    FileManager fileManager=new FileManager(MainActivity.this);
+    TextView textView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +53,12 @@ public class MainActivity extends AppCompatActivity {
         Button save_btn = (Button) findViewById(R.id.savebutton);
         Button scan_btn = (Button) findViewById(R.id.scanbutton);
             //EditText
-        final EditText et = (EditText) findViewById(R.id.EditText);
+
+        textView = (TextView) findViewById(R.id.textView4);
+        textView.setText(fileManager.FileRead("name")+fileManager.FileRead("number")
+        );
             //エラー検知
-        assert et != null;
+       // assert et != null;
         assert save_btn != null;
         assert scan_btn != null;
             //SWを押したときに色が変わる
@@ -60,24 +72,23 @@ public class MainActivity extends AppCompatActivity {
         TimerServices.startAlarm(getApplicationContext());
             //BLEManagerの初期化
         bleManager.init();
-        bleManager.setUser(fileManager.FileRead("user.txt", "user", getApplication()));
-        bleManager.setUserID(fileManager.FileRead("user.txt", "ID",getApplicationContext()));
             //edittextに文字を挿入
-        et.append(fileManager.FileRead("user.txt", "user", getApplication()));
+       // et.append(fileManager.FileRead("user.txt", "user", getApplication()));
         //Mbaasを使用する為のAPIキー
         NCMB.initialize(getApplication(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
                 "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
         //ボタンを押したときの処理
         buttonListener(scan_btn,save_btn);
-        //ネット検索してリスト表示をする
-        searchClassList();
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         permissionManager.RequestPermissionsResult(requestCode,permissions,grantResults);
     }
+
+
     private void pushSw(Button button){
         button.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -104,19 +115,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setProgressTime(2000);
                 bleManager.search();
-                Toast toast = Toast.makeText(getApplicationContext(), "sc"+fileManager.FileRead("user.txt", "ID",getApplicationContext()), Toast.LENGTH_SHORT);
-                toast.show();
+                textView.setText(fileManager.FileRead("name")+fileManager.FileRead("number"));
             }
         });
 
         save_btn.setOnClickListener(new OnClickListener() {
             // このメソッドはクリックされる毎に呼び出される
             public void onClick(View v) {
-                final EditText et = (EditText) findViewById(R.id.EditText);
-                fileManager.FileWrite("user.txt", "user", et.getText().toString(), getApplicationContext());
-                bleManager.setUser(fileManager.FileRead("user.txt", "user", getApplicationContext()));
-                Toast toast = Toast.makeText(getApplicationContext(), "ファイルに保存しました", Toast.LENGTH_SHORT);
-                toast.show();
+                dialogManager.pushProgress();
             }
 
         });
@@ -134,62 +140,5 @@ public class MainActivity extends AppCompatActivity {
         }, time);
         progressBar.setVisibility(View.VISIBLE);
     }
-    private void searchClassList(){
 
-        //Classを検索するためのNCMBQueryインスタンスを作成
-        NCMBQuery<NCMBObject> query = new NCMBQuery<>("Gakkyu");
-
-        //データストアからデータを検索
-        query.findInBackground(new FindCallback<NCMBObject>() {
-            @Override
-            public void done(List<NCMBObject> objects, NCMBException e) {
-                if (e != null) {
-                    Log.d("query", "err");
-                    //検索失敗時の処理
-                } else {
-                    // LayoutファイルのListViewのリソースID
-                    ListView _listView = (ListView) findViewById(R.id.list_item);
-                    // Androidフレームワーク標準のレイアウト
-                    ArrayAdapter<String>adapter = new ArrayAdapter<String>(getApplicationContext(),
-                            R.layout.custom_listview
-                    );
-
-                    String[] name=new String[objects.size()];
-                    String[] id=new String[objects.size()];
-                    for (int i = 0, n = objects.size(); i < n; i++) {
-                        NCMBObject o = objects.get(i);
-//                        Log.i("NCMB", o.getString("room_name"));
-
-                        id[i] = o.getString("Gakkyu_ID");
-                        name[i] = o.getString("Gakkyu_name");
-                        adapter.add(name[i]);
-
-                    }
-                    _listView.setAdapter(adapter);
-
-                    selectList(_listView,name,id);
-                    Log.d("deta", "end");
-                    //検索成功時の処理
-                }
-            }
-        });
-
-    }
-    private void selectList(ListView _listView , final String  []name, final String []userid){
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //ここに処理を書く
-                // 選択したListViewアイテムを表示する
-                ListView list = (ListView) parent;
-                String selectedItem = (String) list.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(), selectedItem,
-                        Toast.LENGTH_LONG).show();
-                //fileManager.FileWrite("user.txt","user",name[position],getApplicationContext());
-                fileManager.FileWrite("user.txt","ID",userid[position],getApplicationContext());
-                Toast.makeText(getApplicationContext(), userid[position],
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 }

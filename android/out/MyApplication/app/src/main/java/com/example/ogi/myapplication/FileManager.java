@@ -1,7 +1,10 @@
 package com.example.ogi.myapplication;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,51 +23,18 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class FileManager {
+    private Context context;
+    FileManager(Context context){this.context=context;}
 
-
-    public void FileWrite(String filename, String id, String data,Context context){
-        try {
-            OutputStream out = context.openFileOutput(filename, MODE_PRIVATE);
-            PrintWriter writer =
-                    new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.append(id+":"+data+"\n");
-            writer.close();
-            Log.d("FileWrite:","ID:"+id+"data:"+data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void FileWrite( String id, String data){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putString(id, data).commit();
+        Toast toast = Toast.makeText(context, "ファイルに保存しました", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
-
-
-    public String removeString(String strSrc, String strRemove) {
-        Pattern pattern = Pattern.compile(strRemove);
-        Matcher matcher = pattern.matcher(strSrc);
-        String strTmp = matcher.replaceAll("");
-
-        return strTmp;
+    public String FileRead(String id) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(id, null);
     }
-
-    public String FileRead(String filename, String id,Context context){
-        try {Log.v("fileread","テスト1");
-            InputStream in = context.openFileInput(filename);
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            String search;
-            while ((search = reader.readLine()) != null) {
-                if(search.startsWith(id)){
-                    Log.v("fileread",search);
-                    reader.close();
-                    return removeString(search,id+":");
-                }
-                Log.v("fileread","テスト２");
-            }
-            reader.close();
-            return "";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
 }

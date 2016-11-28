@@ -98,12 +98,10 @@ public class TimerServices extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        FileManager fileManager=new FileManager();
+
         Toast.makeText(getApplicationContext(), "検出開始", Toast.LENGTH_LONG).show();
-        bleManager=new BLEManager(this);
+        bleManager=new BLEManager(getApplicationContext());
         bleManager.init();
-        bleManager.setUser(fileManager.FileRead("user.txt", "user",getApplicationContext()));
-        bleManager.setUserID(fileManager.FileRead("user.txt", "ID",getApplicationContext()));
         bleManager.search();
 
         //スキャン後タイマー設定
