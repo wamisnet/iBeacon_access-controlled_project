@@ -103,6 +103,7 @@ public class TimerServices extends IntentService {
         bleManager=new BLEManager(this);
         bleManager.init();
         bleManager.setUser(fileManager.FileRead("user.txt", "user",getApplicationContext()));
+        bleManager.setUserID(fileManager.FileRead("user.txt", "ID",getApplicationContext()));
         bleManager.search();
 
         //スキャン後タイマー設定
