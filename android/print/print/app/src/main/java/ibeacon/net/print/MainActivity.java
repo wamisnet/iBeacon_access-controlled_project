@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         //    adapter.add(name + o.getString("attend"));
                             Log.d("break後ii", String.valueOf(ii));
-                            textView.setText(String.valueOf(ii)+"時限目の出席状況");
+                            textView.setText(String.valueOf(ii)+"時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             //出席判定を比較
                          //   for(int ii = 0; ii < 4; ii++) {
                                 if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
