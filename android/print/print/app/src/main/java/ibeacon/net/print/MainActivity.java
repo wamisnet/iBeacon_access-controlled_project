@@ -15,6 +15,7 @@ import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +23,11 @@ public class MainActivity extends AppCompatActivity {
     private ListView _listView = null;
 
     int compH[] = {9,11,13,15};
-    int compT[] = {23,03,23,03};
+    int compT[] = {24,04,24,04};
+
+    int dcompH[] = {10,11,13,15,24}; //検証用
+    int dcompET[] = {8,8,40,04};
+    int dcompST[] = {6,6,35,02};
 
     private ProgressDialog progressDialog;
 
@@ -109,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
     private void setNowClass(String id, final String name){
+        final Calendar now = Calendar.getInstance(); //インスタンス化
+        now.setTimeInMillis(System.currentTimeMillis());
+
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
@@ -119,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         query.findInBackground(new FindCallback<NCMBObject>() {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
+                int ii;
                 if (e != null) {
                     Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
@@ -135,10 +144,29 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
                         if (!userName.equals(user)) {
                             userName = o.getString("attend");
-                            adapter.add(name + o.getString("attend"));
-                            for(int ii = 0; ii < 3; ii++) {
-
+                            int h = now.get(now.HOUR_OF_DAY);//時を取得
+                            for(ii = 0; ii < 4; ii++){
+                                Log.d("ループ",String.valueOf(h));
+                                if(compH[ii] < h && h < compH[ii+1])
+                                {
+                                    Log.d("break前ii", String.valueOf(ii));
+                                    break;
+                                }
                             }
+                        //    adapter.add(name + o.getString("attend"));
+                            Log.d("break後ii", String.valueOf(ii));
+                            //出席判定を比較
+                         //   for(int ii = 0; ii < 4; ii++) {
+                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
+                                    if(getTime(5,o.getString("createDate")) > dcompST[ii] && (getTime(5,o.getString("createDate")) < dcompET[ii])){
+                                        adapter.add(name + o.getString("attend")+"               ○");}
+                                }
+                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
+                                    if(getTime(5,o.getString("createDate")) > dcompET[ii]) {
+                                        adapter.add(name + o.getString("attend")+"               △");}
+                                }
+                                if(getTime(4,o.getString("createDate")) != dcompH[ii]) {
+                                        adapter.add(name + o.getString("attend")+"               ×");}
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
@@ -177,6 +205,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return Integer.parseInt(createTime);
     }
-
 
 }
