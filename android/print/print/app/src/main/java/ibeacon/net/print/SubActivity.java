@@ -4,26 +4,28 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static ibeacon.net.print.R.id.textView;
+/**
+ * Created by ogi on 2016/12/01.
+ */
 
-public class MainActivity extends AppCompatActivity {
+public class SubActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
 
@@ -39,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.subactivity);
         NCMB.initialize(this.getApplicationContext(),"fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
                 "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
-        findViewById(R.id.reload).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.reload2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pushProgress();
@@ -51,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {// インテントの生成
-                Intent intent = new Intent(getApplication(), SubActivity.class);
-                intent.setClassName("ibeacon.net.print", "ibeacon.net.print.SubActivity");
+                Intent intent = new Intent(getApplication(), MainActivity.class);
+                intent.setClassName("ibeacon.net.print", "ibeacon.net.print.MainActivity");
 
                 // SubActivity の起動
                 startActivity(intent);
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
         // LayoutファイルのListViewのリソースID
-        _listView = (ListView) findViewById(R.id.list_item);
+        _listView = (ListView) findViewById(R.id.list_item2);
         adapter = new ArrayAdapter<String>(getApplicationContext(),
                 R.layout.custom_listview
         );
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     progressDialog.dismiss();
-                   showdDialog(name,id);
+                    showdDialog(name,id);
                 }
             }
         });
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         int defaultItem = 0; // デフォルトでチェックされているアイテム
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
-        new AlertDialog.Builder(MainActivity.this)
+        new AlertDialog.Builder(SubActivity.this)
                 .setTitle("Class Selector")
                 .setSingleChoiceItems(items, defaultItem, new DialogInterface.OnClickListener() {
                     @Override
@@ -133,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void setNowClass(String id, final String name){
         final Calendar now = Calendar.getInstance(); //インスタンス化
-        final TextView textView = (TextView) findViewById(R.id.textView);
         now.setTimeInMillis(System.currentTimeMillis());
 
         //TestClassを検索するためのNCMBQueryインスタンスを作成
@@ -160,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
                         user = o.getString("attend");
                         for(int l=1;l<=6;l++)
-                        Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
-                        if (!userName.equals(user)) {
+                            Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
+                    //    if (!userName.equals(user)) {
                             userName = o.getString("attend");
                             int h = now.get(now.HOUR_OF_DAY);//時を取得
                             for(ii = 0; ii < 4; ii++){
@@ -172,30 +173,26 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 }
                             }
-                        //    adapter.add(name + o.getString("attend"));
+                            //    adapter.add(name + o.getString("attend"));
                             Log.d("break後ii", String.valueOf(ii));
-                            textView.setText(String.valueOf(ii)+"時限目の出席状況");
                             //出席判定を比較
-                         //   for(int ii = 0; ii < 4; ii++) {
-                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                    if(getTime(5,o.getString("createDate")) > dcompST[ii] && (getTime(5,o.getString("createDate")) < dcompET[ii])){
-                                        adapter.add(name + o.getString("attend")+"               ○");}
-                                }
-                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                    if(getTime(5,o.getString("createDate")) > dcompET[ii]) {
-                                        adapter.add(name + o.getString("attend")+"               △");}
-                                }
-                                if(getTime(4,o.getString("createDate")) != dcompH[ii]) {
-                                        adapter.add(name + o.getString("attend")+"               ×");}
+                            //   for(int ii = 0; ii < 4; ii++) {
+                            if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
+                                if(getTime(5,o.getString("createDate")) > dcompST[ii] && (getTime(5,o.getString("createDate")) < dcompET[ii])){
+                                    adapter.add(name + o.getString("attend")+"               ○");}
+                            }
+                            if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
+                                if(getTime(5,o.getString("createDate")) > dcompET[ii]) {
+                                    adapter.add(name + o.getString("attend")+"               △");}
+                            }
+                            if(getTime(4,o.getString("createDate")) != dcompH[ii]) {
+                                adapter.add(name + o.getString("attend")+"               ×");}
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
-
                     }
                     _listView.setAdapter(adapter);
-
                 }
-            }
         });
     }
     private int getTime(int mode, String createTime) {
@@ -229,3 +226,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
