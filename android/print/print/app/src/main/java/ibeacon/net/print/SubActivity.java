@@ -159,7 +159,7 @@ public class SubActivity extends AppCompatActivity {
                     }
                 }
                 _listView.setAdapter(_adapter);
-                settext3.setText("選択中のクラス:"+id);
+                settext3.setText("クラス:"+id);
             }
         });
     }
@@ -196,42 +196,43 @@ public class SubActivity extends AppCompatActivity {
 
     public void obj_print(int youbi, int time, NCMBObject o, String kamoku, String name) {
         String user, userName;
-
+        int tikoku_count = 0;
+        int kesseki_count = 0;
         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
         user = o.getString("attend");
         for (int l = 1; l <= 6; l++)
             Log.i("create getTime", String.valueOf(getTime(l, o.getString("createDate"))));
         //    if (!userName.equals(user)) {
         userName = o.getString("attend");
-        _adapter.add(name + o.getString("attend") + "               " + hantei(o));
+        //出欠カウント
+        if((hantei(o,time)) == "×" ){
+            kesseki_count++;
+        }else if ((hantei(o,time)) == "△" ) {
+            tikoku_count++;
+        }
+        if(tikoku_count > 3 && tikoku_count < 6) {
+                kesseki_count++;
+                tikoku_count = tikoku_count % 3;
+        }else if (tikoku_count >= 6){
+            kesseki_count += 2;
+            tikoku_count = tikoku_count % 3;
+        }
+
+        _adapter.add(name + o.getString("attend") +"               " + hantei(o,time));
     }
 
-    public String hantei(NCMBObject o)//出席判定
+    public String hantei(NCMBObject o,int time)//出席判定
     {
-        int ii;
         Calendar now = Calendar.getInstance(); //インスタンス化
         int h = now.get(now.HOUR_OF_DAY);//時を取得
 
-        //ループi修正
-        for (ii = 0; ii < 4; ii++) {
-            Log.d("ループ", String.valueOf(h));
-            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
-                Log.d("break前ii", String.valueOf(ii));
-                break;
-            }
-        }
-       // if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
-            if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
-                return (String.valueOf(ii+1)+"時限目        "+"○");
-            } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
-                return (String.valueOf(ii+1)+"時限目        "+"△");
+            if (getTime(5, o.getString("createDate")) > dcompST[time-1] && (getTime(5, o.getString("createDate")) < dcompST[time-1] + timerange)) {
+                return ("○");
+            } else if ((getTime(5, o.getString("createDate")) >= (dcompST[time-1] + timerange )) && (getTime(5, o.getString("createDate")) < (dcompST[time-1] + timerange2 ))){
+                return ("△");
             } else {
-                return (String.valueOf(ii+1)+"時限目        "+"×");
+                return ("×");
             }
-      //  }
-         //   Log.d("hantei", String.valueOf(ii));
-          //  Log.d("hantei", "notfound");
-         //   return "";
     }
 }
 
