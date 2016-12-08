@@ -10,13 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.TextView;
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -26,23 +25,23 @@ import java.util.List;
  */
 
 public class SubActivity extends AppCompatActivity {
-    private ArrayAdapter<String> adapter = null;
+    private ArrayAdapter<String> _adapter = null;
     private ListView _listView = null;
-
-    int compH[] = {9,11,13,15};
-    int compT[] = {24,04,24,04};
-
-    int dcompH[] = {10,11,13,15,24}; //検証用
-    int dcompET[] = {8,8,40,04};
-    int dcompST[] = {6,6,35,02};
-
     private ProgressDialog progressDialog;
+
+    int compH[] = {9, 11, 13, 15};
+    int timerange = 5;
+    int timerange2 = 15;
+    int compST[] = {20, 00, 20, 00};
+
+    int dcompH[] = {10, 12, 14, 16, 24}; //検証用
+    int dcompST[] = {20, 19, 45, 02};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subactivity);
-        NCMB.initialize(this.getApplicationContext(),"fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+        NCMB.initialize(this.getApplicationContext(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
                 "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
         findViewById(R.id.reload2).setOnClickListener(new View.OnClickListener() {
@@ -67,12 +66,12 @@ public class SubActivity extends AppCompatActivity {
         });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item2);
-        adapter = new ArrayAdapter<String>(getApplicationContext(),
+        _adapter = new ArrayAdapter<String>(getApplicationContext(),
                 R.layout.custom_listview
         );
     }
-    private void pushProgress(){
 
+    private void pushProgress() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("教室を検索中");
         progressDialog.setMessage("インターネットに接続してデータベースを検索しています。");
@@ -81,7 +80,8 @@ public class SubActivity extends AppCompatActivity {
         progressDialog.show();
         pushReload();
     }
-    private void pushReload(){
+
+    private void pushReload() {
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("Gakkyu");//AttendClass
         //データストアからデータを検索
@@ -89,11 +89,11 @@ public class SubActivity extends AppCompatActivity {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
                 if (e != null) {
-                    Log.d("NCMBQuery", "err:"+String.valueOf(e));
+                    Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
                 } else {
-                    String[] name=new String[objects.size()];
-                    String[] id=new String[objects.size()];
+                    String[] name = new String[objects.size()];
+                    String[] id = new String[objects.size()];
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
                         //Log.i("NCMB", o.getString("Gakkyu_name"));
@@ -102,12 +102,13 @@ public class SubActivity extends AppCompatActivity {
 
                     }
                     progressDialog.dismiss();
-                    showdDialog(name,id);
+                    showdDialog(name, id);
                 }
             }
         });
     }
-    private void showdDialog(final String[] items, final String[] id){
+
+    private void showdDialog(final String[] items, final String[] id) {
         int defaultItem = 0; // デフォルトでチェックされているアイテム
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
@@ -126,104 +127,111 @@ public class SubActivity extends AppCompatActivity {
                         if (!checkedItems.isEmpty()) {
                             Log.d("checkedItem:", "" + checkedItems.get(0));
                             Log.d("checkedItemSrect:", "" + id[checkedItems.get(0)]);
-                            setNowClass(id[checkedItems.get(0)],items[checkedItems.get(0)]);
+                            setNowClass(id[checkedItems.get(0)], items[checkedItems.get(0)]);
                         }
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-    private void setNowClass(String id, final String name){
+
+    private void setNowClass(final String id, final String name) {
         final Calendar now = Calendar.getInstance(); //インスタンス化
         now.setTimeInMillis(System.currentTimeMillis());
-
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
         query.whereEqualTo("Gakkyu_ID", id);
-
         query.addOrderByDescending("attend");
         query.addOrderByDescending("createDate");
+
         query.findInBackground(new FindCallback<NCMBObject>() {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
-                int ii;
+                final TextView settext3 = (TextView)findViewById(R.id.textView3);
                 if (e != null) {
                     Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
                 } else {
-                    adapter = new ArrayAdapter<String>(getApplicationContext(),
-                            R.layout.custom_listview
-                    );
-                    String userName = "", user;
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
-                        user = o.getString("attend");
-                        for(int l=1;l<=6;l++)
-                            Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
-                    //    if (!userName.equals(user)) {
-                            userName = o.getString("attend");
-                            int h = now.get(now.HOUR_OF_DAY);//時を取得
-                            for(ii = 0; ii < 4; ii++){
-                                Log.d("ループ",String.valueOf(h));
-                                if(compH[ii] < h && h < compH[ii+1])
-                                {
-                                    Log.d("break前ii", String.valueOf(ii));
-                                    break;
-                                }
-                            }
-                            //    adapter.add(name + o.getString("attend"));
-                            Log.d("break後ii", String.valueOf(ii));
-                            //出席判定を比較
-                            //   for(int ii = 0; ii < 4; ii++) {
-                            if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                if(getTime(5,o.getString("createDate")) > dcompST[ii] && (getTime(5,o.getString("createDate")) < dcompET[ii])){
-                                    adapter.add(name + o.getString("attend")+"               ○");}
-                            }
-                            if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                if(getTime(5,o.getString("createDate")) > dcompET[ii]) {
-                                    adapter.add(name + o.getString("attend")+"               △");}
-                            }
-                            if(getTime(4,o.getString("createDate")) != dcompH[ii]) {
-                                adapter.add(name + o.getString("attend")+"               ×");}
-                        }
-                        //id[i] = o.getString("Gakkyu_ID");
-                        //name[i] = o.getString("Gakkyu_name");
+                        obj_print(2, 1, o, "卒研", name);
                     }
-                    _listView.setAdapter(adapter);
                 }
+                _listView.setAdapter(_adapter);
+                settext3.setText("選択中のクラス:"+id);
+            }
         });
     }
-    private int getTime(int mode, String createTime) {
-        int index,indexaf;
 
-        if(mode==1) {//year
+    private int getTime(int mode, String createTime) {
+        int index, indexaf;
+
+        if (mode == 1) {//year
             return Integer.parseInt(createTime.substring(0, 4));
         }
-        index=createTime.indexOf("-");
-        index=createTime.indexOf("-",index+1);
-        if(mode==2) {//mon
+        index = createTime.indexOf("-");
+        index = createTime.indexOf("-", index + 1);
+        if (mode == 2) {//mon
             return Integer.parseInt(createTime.substring(5, index));
         }
-        indexaf=createTime.indexOf("T",index+1);
+        indexaf = createTime.indexOf("T", index + 1);
         if (mode == 3) {//day
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
+            return Integer.parseInt(createTime.substring(index + 1, indexaf));
         }
-        index=createTime.indexOf(":",indexaf+1);
-        if(mode==4){//h
-            return Integer.parseInt(createTime.substring(indexaf+1, index))+9;
+        index = createTime.indexOf(":", indexaf + 1);
+        if (mode == 4) {//h
+            return Integer.parseInt(createTime.substring(indexaf + 1, index)) + 9;
         }
-        indexaf=createTime.indexOf(":",index+1);
-        if(mode==5){//m
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
+        indexaf = createTime.indexOf(":", index + 1);
+        if (mode == 5) {//m
+            return Integer.parseInt(createTime.substring(index + 1, indexaf));
         }
-        index=createTime.indexOf(".",indexaf+1);
-        if(mode==6){//s
-            return Integer.parseInt(createTime.substring(indexaf+1, index));
+        index = createTime.indexOf(".", indexaf + 1);
+        if (mode == 6) {//s
+            return Integer.parseInt(createTime.substring(indexaf + 1, index));
         }
         return Integer.parseInt(createTime);
     }
 
+    public void obj_print(int youbi, int time, NCMBObject o, String kamoku, String name) {
+        String user, userName;
+
+        Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
+        user = o.getString("attend");
+        for (int l = 1; l <= 6; l++)
+            Log.i("create getTime", String.valueOf(getTime(l, o.getString("createDate"))));
+        //    if (!userName.equals(user)) {
+        userName = o.getString("attend");
+        _adapter.add(name + o.getString("attend") + "               " + hantei(o));
+    }
+
+    public String hantei(NCMBObject o)//出席判定
+    {
+        int ii;
+        Calendar now = Calendar.getInstance(); //インスタンス化
+        int h = now.get(now.HOUR_OF_DAY);//時を取得
+
+        //ループi修正
+        for (ii = 0; ii < 4; ii++) {
+            Log.d("ループ", String.valueOf(h));
+            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
+                Log.d("break前ii", String.valueOf(ii));
+                break;
+            }
+        }
+       // if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
+            if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
+                return (String.valueOf(ii+1)+"時限目        "+"○");
+            } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
+                return (String.valueOf(ii+1)+"時限目        "+"△");
+            } else {
+                return (String.valueOf(ii+1)+"時限目        "+"×");
+            }
+      //  }
+         //   Log.d("hantei", String.valueOf(ii));
+          //  Log.d("hantei", "notfound");
+         //   return "";
+    }
 }
 

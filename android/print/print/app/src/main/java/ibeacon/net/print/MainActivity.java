@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
@@ -21,20 +20,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static ibeacon.net.print.R.id.textView;
-
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
-
-    int compH[] = {9,11,13,15};
-    int compT[] = {24,04,24,04};
-
-    int dcompH[] = {10,11,13,15,24}; //検証用
-    int dcompET[] = {8,8,40,04};
-    int dcompST[] = {6,6,35,02};
-
     private ProgressDialog progressDialog;
+
+    int compH[] = {9, 11, 13, 15};
+    int timerange = 5;
+    int timerange2 = 15;
+    int compST[] = {20, 00, 20, 00};
+
+    int dcompH[] = {10, 12, 14, 16, 24}; //検証用
+    int dcompST[] = {20, 19, 45, 02};
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,13 +133,13 @@ public class MainActivity extends AppCompatActivity {
     private void setNowClass(String id, final String name){
         final Calendar now = Calendar.getInstance(); //インスタンス化
         final TextView textView = (TextView) findViewById(R.id.textView);
+        final SubActivity subA = new SubActivity();
         now.setTimeInMillis(System.currentTimeMillis());
 
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
         query.whereEqualTo("Gakkyu_ID", id);
-
         query.addOrderByDescending("attend");
         query.addOrderByDescending("createDate");
         query.findInBackground(new FindCallback<NCMBObject>() {
@@ -166,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             int h = now.get(now.HOUR_OF_DAY);//時を取得
                             for(ii = 0; ii < 4; ii++){
                                 Log.d("ループ",String.valueOf(h));
-                                if(compH[ii] < h && h < compH[ii+1])
+                                if(dcompH[ii] <= h && h < dcompH[ii+1])
                                 {
                                     Log.d("break前ii", String.valueOf(ii));
                                     break;
@@ -174,19 +173,14 @@ public class MainActivity extends AppCompatActivity {
                             }
                         //    adapter.add(name + o.getString("attend"));
                             Log.d("break後ii", String.valueOf(ii));
-                            textView.setText(String.valueOf(ii)+"時限目の出席状況　○：出席　×：欠席　△：遅刻");
-                            //出席判定を比較
-                         //   for(int ii = 0; ii < 4; ii++) {
-                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                    if(getTime(5,o.getString("createDate")) > dcompST[ii] && (getTime(5,o.getString("createDate")) < dcompET[ii])){
-                                        adapter.add(name + o.getString("attend")+"               ○");}
-                                }
-                                if(getTime(4,o.getString("createDate")) == dcompH[ii]) {
-                                    if(getTime(5,o.getString("createDate")) > dcompET[ii]) {
-                                        adapter.add(name + o.getString("attend")+"               △");}
-                                }
-                                if(getTime(4,o.getString("createDate")) != dcompH[ii]) {
-                                        adapter.add(name + o.getString("attend")+"               ×");}
+                            if(ii < 4){
+                                textView.setText(String.valueOf(ii + 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
+                            }
+                          /*  if(ii == 4){
+                                textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
+                            }*/
+                            //出席判定
+                            adapter.add(name + o.getString("attend")+"               "+hantei(o));
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
@@ -228,4 +222,30 @@ public class MainActivity extends AppCompatActivity {
         return Integer.parseInt(createTime);
     }
 
+    public String hantei(NCMBObject o)//出席判定
+    {
+        int ii;
+        Calendar now = Calendar.getInstance(); //インスタンス化
+        int h = now.get(now.HOUR_OF_DAY);//時を取得
+
+        for (ii = 0; ii < 4; ii++) {
+            Log.d("ループ", String.valueOf(h));
+            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
+                Log.d("break前ii", String.valueOf(ii));
+                break;
+            }
+        }
+         if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
+        if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
+            return ("○");
+        } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
+            return ("△");
+        } else {
+            return ("×");
+        }
+          }
+        Log.d("hantei", String.valueOf(ii));
+        Log.d("hantei", "notfound");
+           return "×";
+    }
 }
