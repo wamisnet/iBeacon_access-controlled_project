@@ -47,8 +47,8 @@ public class SubActivity extends AppCompatActivity {
         findViewById(R.id.reload2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pushProgress();
-
+                DialogManager dialogManager = new DialogManager(SubActivity.this);
+                dialogManager.Attendance();
             }
         });
 
@@ -155,10 +155,10 @@ public class SubActivity extends AppCompatActivity {
                 } else {
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        obj_print(2, 1, o, "卒研", name);
+                        obj_print( 1, o, "卒研", name);
                     }
                 }
-                _listView.setAdapter(_adapter);
+
                 settext3.setText("選択中のクラス:"+id);
             }
         });
@@ -194,7 +194,7 @@ public class SubActivity extends AppCompatActivity {
         return Integer.parseInt(createTime);
     }
 
-    public void obj_print(int youbi, int time, NCMBObject o, String kamoku, String name) {
+    public void obj_print( int time, NCMBObject o, String kamoku, String name) {
         String user, userName;
 
         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
@@ -204,6 +204,7 @@ public class SubActivity extends AppCompatActivity {
         //    if (!userName.equals(user)) {
         userName = o.getString("attend");
         _adapter.add(name + o.getString("attend") + "               " + hantei(o));
+        
     }
 
     public String hantei(NCMBObject o)//出席判定
