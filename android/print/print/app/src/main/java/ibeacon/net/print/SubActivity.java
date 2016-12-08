@@ -29,13 +29,17 @@ public class SubActivity extends AppCompatActivity {
     private ListView _listView = null;
     private ProgressDialog progressDialog;
 
+    int tikoku_count = 0;
+    int kesseki_count = 0;
+    String userName = "";
+
     int compH[] = {9, 11, 13, 15};
     int timerange = 5;
     int timerange2 = 15;
     int compST[] = {20, 00, 20, 00};
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
-    int dcompST[] = {20, 19, 45, 02};
+    int dcompST[] = {00, 19, 45, 02};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,9 @@ public class SubActivity extends AppCompatActivity {
         findViewById(R.id.reload2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                _adapter = new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.custom_listview
+                );
                 pushProgress();
 
             }
@@ -66,9 +73,7 @@ public class SubActivity extends AppCompatActivity {
         });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item2);
-        _adapter = new ArrayAdapter<String>(getApplicationContext(),
-                R.layout.custom_listview
-        );
+
     }
 
     private void pushProgress() {
@@ -155,7 +160,7 @@ public class SubActivity extends AppCompatActivity {
                 } else {
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        obj_print(2, 1, o, "卒研", name);
+                        obj_print(1, o, "卒研", name);
                     }
                 }
                 _listView.setAdapter(_adapter);
@@ -194,31 +199,44 @@ public class SubActivity extends AppCompatActivity {
         return Integer.parseInt(createTime);
     }
 
-    public void obj_print(int youbi, int time, NCMBObject o, String kamoku, String name) {
-        String user, userName;
-        int tikoku_count = 0;
-        int kesseki_count = 0;
+    public void obj_print(int time, NCMBObject o, String kamoku, String name) {
+        String user;
         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
-        user = o.getString("attend");
+        String warn_flag = "";
+        int flag = 0;
+
+        //createtime
         for (int l = 1; l <= 6; l++)
             Log.i("create getTime", String.valueOf(getTime(l, o.getString("createDate"))));
-        //    if (!userName.equals(user)) {
-        userName = o.getString("attend");
-        //出欠カウント
-        if((hantei(o,time)) == "×" ){
-            kesseki_count++;
-        }else if ((hantei(o,time)) == "△" ) {
-            tikoku_count++;
-        }
-        if(tikoku_count > 3 && tikoku_count < 6) {
-                kesseki_count++;
-                tikoku_count = tikoku_count % 3;
-        }else if (tikoku_count >= 6){
-            kesseki_count += 2;
-            tikoku_count = tikoku_count % 3;
-        }
 
-        _adapter.add(name + o.getString("attend") +"               " + hantei(o,time));
+        user = o.getString("attend");
+        if(!userName.equals(user)){
+            userName=user;
+
+            flag += kesseki_count;
+            flag += tikoku_count / 3;
+
+            if (flag >= 3 && flag < 5)
+            {
+                warn_flag = "15% 警告＆課題";
+            }else if (flag >= 5){
+                warn_flag = "25% 単位取得不可";
+            }
+            _adapter.add(name + o.getString("attend") +"       "
+                    +"欠席:"+kesseki_count+" "+"遅刻:"+tikoku_count+"　　　　" +
+                    ""+warn_flag);
+
+            kesseki_count = 0;
+            tikoku_count = 0;
+
+        }else {
+            //欠席遅刻回数カウント
+            if ((hantei(o, time)) == "×") {
+                kesseki_count++;
+            } else if ((hantei(o, time)) == "△") {
+                tikoku_count++;
+            }
+        }
     }
 
     public String hantei(NCMBObject o,int time)//出席判定
@@ -226,7 +244,7 @@ public class SubActivity extends AppCompatActivity {
         Calendar now = Calendar.getInstance(); //インスタンス化
         int h = now.get(now.HOUR_OF_DAY);//時を取得
 
-            if (getTime(5, o.getString("createDate")) > dcompST[time-1] && (getTime(5, o.getString("createDate")) < dcompST[time-1] + timerange)) {
+            if (getTime(5, o.getString("createDate")) > dcompST[time-1]-timerange && (getTime(5, o.getString("createDate")) < dcompST[time-1] + timerange)) {
                 return ("○");
             } else if ((getTime(5, o.getString("createDate")) >= (dcompST[time-1] + timerange )) && (getTime(5, o.getString("createDate")) < (dcompST[time-1] + timerange2 ))){
                 return ("△");
