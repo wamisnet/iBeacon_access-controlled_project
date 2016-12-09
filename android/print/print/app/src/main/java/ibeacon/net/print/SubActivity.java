@@ -29,13 +29,17 @@ public class SubActivity extends AppCompatActivity {
     private ListView _listView = null;
     private ProgressDialog progressDialog;
 
+    int tikoku_count = 0;
+    int kesseki_count = 0;
+    String userName = "";
+
     int compH[] = {9, 11, 13, 15};
     int timerange = 5;
     int timerange2 = 15;
     int compST[] = {20, 00, 20, 00};
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
-    int dcompST[] = {20, 19, 45, 02};
+    int dcompST[] = {00, 19, 45, 02};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +51,13 @@ public class SubActivity extends AppCompatActivity {
         findViewById(R.id.reload2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                _adapter = new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.custom_listview
+                );
                 DialogManager dialogManager = new DialogManager(SubActivity.this);
                 dialogManager.Attendance();
+
             }
         });
 
@@ -66,9 +75,7 @@ public class SubActivity extends AppCompatActivity {
         });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item2);
-        _adapter = new ArrayAdapter<String>(getApplicationContext(),
-                R.layout.custom_listview
-        );
+
     }
 
     private void pushProgress() {
@@ -155,11 +162,11 @@ public class SubActivity extends AppCompatActivity {
                 } else {
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        obj_print( 1, o, "卒研", name);
+                        obj_print(1, o, "卒研", name);
                     }
                 }
-
-                settext3.setText("選択中のクラス:"+id);
+                _listView.setAdapter(_adapter);
+                settext3.setText("クラス:"+id);
             }
         });
     }
@@ -194,45 +201,61 @@ public class SubActivity extends AppCompatActivity {
         return Integer.parseInt(createTime);
     }
 
-    public void obj_print( int time, NCMBObject o, String kamoku, String name) {
-        String user, userName;
+
+    public void obj_print(int time, NCMBObject o, String kamoku, String name) {
+        String user;
 
         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
-        user = o.getString("attend");
+        String warn_flag = "";
+        int flag = 0;
+
+        //createtime
         for (int l = 1; l <= 6; l++)
             Log.i("create getTime", String.valueOf(getTime(l, o.getString("createDate"))));
-        //    if (!userName.equals(user)) {
-        userName = o.getString("attend");
-        _adapter.add(name + o.getString("attend") + "               " + hantei(o));
-        
+
+
+        user = o.getString("attend");
+        if(!userName.equals(user)){
+            userName=user;
+
+            flag += kesseki_count;
+            flag += tikoku_count / 3;
+
+            if (flag >= 3 && flag < 5)
+            {
+                warn_flag = "15% 警告＆課題";
+            }else if (flag >= 5){
+                warn_flag = "25% 単位取得不可";
+            }
+            _adapter.add(name + o.getString("attend") +"       "
+                    +"欠席:"+kesseki_count+" "+"遅刻:"+tikoku_count+"　　　　" +
+                    ""+warn_flag);
+
+            kesseki_count = 0;
+            tikoku_count = 0;
+
+        }else {
+            //欠席遅刻回数カウント
+            if ((hantei(o, time)) == "×") {
+                kesseki_count++;
+            } else if ((hantei(o, time)) == "△") {
+                tikoku_count++;
+            }
+        }
     }
 
-    public String hantei(NCMBObject o)//出席判定
+    public String hantei(NCMBObject o,int time)//出席判定
     {
-        int ii;
         Calendar now = Calendar.getInstance(); //インスタンス化
         int h = now.get(now.HOUR_OF_DAY);//時を取得
 
-        //ループi修正
-        for (ii = 0; ii < 4; ii++) {
-            Log.d("ループ", String.valueOf(h));
-            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
-                Log.d("break前ii", String.valueOf(ii));
-                break;
-            }
-        }
-       // if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
-            if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
-                return (String.valueOf(ii+1)+"時限目        "+"○");
-            } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
-                return (String.valueOf(ii+1)+"時限目        "+"△");
+            if (getTime(5, o.getString("createDate")) > dcompST[time-1]-timerange && (getTime(5, o.getString("createDate")) < dcompST[time-1] + timerange)) {
+                return ("○");
+            } else if ((getTime(5, o.getString("createDate")) >= (dcompST[time-1] + timerange )) && (getTime(5, o.getString("createDate")) < (dcompST[time-1] + timerange2 ))){
+                return ("△");
             } else {
-                return (String.valueOf(ii+1)+"時限目        "+"×");
+                return ("×");
             }
-      //  }
-         //   Log.d("hantei", String.valueOf(ii));
-          //  Log.d("hantei", "notfound");
-         //   return "";
     }
 }
 
