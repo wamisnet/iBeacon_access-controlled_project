@@ -3,28 +3,37 @@ package ibeacon.net.print;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.nifty.cloud.mb.core.FindCallback;
 import com.nifty.cloud.mb.core.NCMB;
 import com.nifty.cloud.mb.core.NCMBException;
 import com.nifty.cloud.mb.core.NCMBObject;
 import com.nifty.cloud.mb.core.NCMBQuery;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
-
-    int compH[] = {9,11,13,15};
-    int compT[] = {23,03,23,03};
-
     private ProgressDialog progressDialog;
+
+    int compH[] = {9, 11, 13, 15};
+    int timerange = 5;
+    int timerange2 = 15;
+    int compST[] = {20, 00, 20, 00};
+
+    int dcompH[] = {10, 12, 14, 16, 24}; //検証用
+    int dcompST[] = {20, 19, 45, 02};
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
                 pushProgress();
 
             }
+        });
+
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {// インテントの生成
+                Intent intent = new Intent(getApplication(), SubActivity.class);
+                intent.setClassName("ibeacon.net.print", "ibeacon.net.print.SubActivity");
+
+                // SubActivity の起動
+                startActivity(intent);
+
+            }
+
         });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item);
@@ -109,16 +131,21 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
     private void setNowClass(String id, final String name){
+        final Calendar now = Calendar.getInstance(); //インスタンス化
+        final TextView textView = (TextView) findViewById(R.id.textView);
+        final SubActivity subA = new SubActivity();
+        now.setTimeInMillis(System.currentTimeMillis());
+
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
         query.whereEqualTo("Gakkyu_ID", id);
-
         query.addOrderByDescending("attend");
         query.addOrderByDescending("createDate");
         query.findInBackground(new FindCallback<NCMBObject>() {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
+                int ii;
                 if (e != null) {
                     Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
@@ -135,15 +162,32 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
                         if (!userName.equals(user)) {
                             userName = o.getString("attend");
-                            adapter.add(name + o.getString("attend"));
-                            for(int ii = 0; ii < 3; ii++) {
-
+                            int h = now.get(now.HOUR_OF_DAY);//時を取得
+                            for(ii = 0; ii < 4; ii++){
+                                Log.d("ループ",String.valueOf(h));
+                                if(dcompH[ii] <= h && h < dcompH[ii+1])
+                                {
+                                    Log.d("break前ii", String.valueOf(ii));
+                                    break;
+                                }
                             }
+                        //    adapter.add(name + o.getString("attend"));
+                            Log.d("break後ii", String.valueOf(ii));
+                            if(ii < 4){
+                                textView.setText(String.valueOf(ii + 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
+                            }
+                          /*  if(ii == 4){
+                                textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
+                            }*/
+                            //出席判定
+                            adapter.add(name + o.getString("attend")+"               "+hantei(o));
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
+
                     }
                     _listView.setAdapter(adapter);
+
                 }
             }
         });
@@ -178,5 +222,30 @@ public class MainActivity extends AppCompatActivity {
         return Integer.parseInt(createTime);
     }
 
+    public String hantei(NCMBObject o)//出席判定
+    {
+        int ii;
+        Calendar now = Calendar.getInstance(); //インスタンス化
+        int h = now.get(now.HOUR_OF_DAY);//時を取得
 
+        for (ii = 0; ii < 4; ii++) {
+            Log.d("ループ", String.valueOf(h));
+            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
+                Log.d("break前ii", String.valueOf(ii));
+                break;
+            }
+        }
+         if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
+        if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
+            return ("○");
+        } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
+            return ("△");
+        } else {
+            return ("×");
+        }
+          }
+        Log.d("hantei", String.valueOf(ii));
+        Log.d("hantei", "notfound");
+           return "×";
+    }
 }
