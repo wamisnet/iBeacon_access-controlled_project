@@ -20,19 +20,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MINUTE;
+
 public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter = null;
     private ListView _listView = null;
     private ProgressDialog progressDialog;
 
     int compH[] = {9, 11, 13, 15};
-    int timerange = 5;
-    int timerange2 = 15;
-    int compST[] = {20, 00, 20, 00};
+    int timerange = 5;//許容範囲
+    int timelate = 15;//遅刻範囲
+    int timeClass = 90;//授業時間
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
     int dcompST[] = {20, 19, 45, 02};
 
+    int HS_timetable[] = {9, 11, 13, 15};
+    int MS_timetable[] = {20, 00, 20, 00};
+
+    TimerManager timerManager = new TimerManager();
 
 
     @Override
@@ -156,96 +163,57 @@ public class MainActivity extends AppCompatActivity {
                     String userName = "", user;
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
-                        Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
                         user = o.getString("attend");
-                        for(int l=1;l<=6;l++)
-                        Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
-                        if (!userName.equals(user)) {
-                            userName = o.getString("attend");
-                            int h = now.get(now.HOUR_OF_DAY);//時を取得
+
+                            if (!userName.equals(user)) {
+                                Log.i("create getTime", String.valueOf(o.getString("attend"))+" : "+String.valueOf(o.getString("createDate")));
+                                userName = o.getString("attend");
+                            int h = now.get(HOUR_OF_DAY);//時を取得
                             for(ii = 0; ii < 4; ii++){
-                                Log.d("ループ",String.valueOf(h));
+                                //Log.d("ループ",String.valueOf(h));
                                 if(dcompH[ii] <= h && h < dcompH[ii+1])
                                 {
-                                    Log.d("break前ii", String.valueOf(ii));
+                                    //Log.d("break前ii", String.valueOf(ii));
                                     break;
                                 }
                             }
-                        //    adapter.add(name + o.getString("attend"));
-                            Log.d("break後ii", String.valueOf(ii));
+                            //Log.d("break後ii", String.valueOf(ii));
                             if(ii < 4){
                                 textView.setText(String.valueOf(ii + 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             }
-                          /*  if(ii == 4){
-                                textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
-                            }*/
                             //出席判定
                             adapter.add(name + o.getString("attend")+"               "+hantei(o));
                         }
-                        //id[i] = o.getString("Gakkyu_ID");
-                        //name[i] = o.getString("Gakkyu_name");
-
                     }
                     _listView.setAdapter(adapter);
-
                 }
             }
         });
-    }
-    private int getTime(int mode, String createTime) {
-        int index,indexaf;
-
-        if(mode==1) {//year
-            return Integer.parseInt(createTime.substring(0, 4));
-        }
-        index=createTime.indexOf("-");
-        index=createTime.indexOf("-",index+1);
-        if(mode==2) {//mon
-            return Integer.parseInt(createTime.substring(5, index));
-        }
-        indexaf=createTime.indexOf("T",index+1);
-        if (mode == 3) {//day
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
-        }
-        index=createTime.indexOf(":",indexaf+1);
-        if(mode==4){//h
-            return Integer.parseInt(createTime.substring(indexaf+1, index))+9;
-        }
-        indexaf=createTime.indexOf(":",index+1);
-        if(mode==5){//m
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
-        }
-        index=createTime.indexOf(".",indexaf+1);
-        if(mode==6){//s
-            return Integer.parseInt(createTime.substring(indexaf+1, index));
-        }
-        return Integer.parseInt(createTime);
     }
 
     public String hantei(NCMBObject o)//出席判定
     {
         int ii;
-        Calendar now = Calendar.getInstance(); //インスタンス化
-        int h = now.get(now.HOUR_OF_DAY);//時を取得
+        Calendar NowTime = Calendar.getInstance();
 
-        for (ii = 0; ii < 4; ii++) {
-            Log.d("ループ", String.valueOf(h));
-            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
-                Log.d("break前ii", String.valueOf(ii));
-                break;
+        Calendar CreateTime= Calendar.getInstance();
+        CreateTime.set(timerManager.getTime(1,o.getString("createDate")),timerManager.getTime(2,o.getString("createDate"))-1,timerManager.getTime(3,o.getString("createDate"))+9,timerManager.getTime(4,o.getString("createDate")),timerManager.getTime(5,o.getString("createDate")),timerManager.getTime(6,o.getString("createDate")));
+        for(int i=0;i<4;i++) {
+            NowTime.set(HOUR_OF_DAY,HS_timetable[i]);
+            NowTime.set(MINUTE,MS_timetable[i]);
+            Log.d("TimeNow", String.valueOf(NowTime.getTimeInMillis()));
+            Log.d("TimeCreate", String.valueOf(CreateTime.getTimeInMillis()));
+            long CompTime=(CreateTime.getTimeInMillis()-NowTime.getTimeInMillis())/60/1000;
+            Log.d("Time", String.valueOf(CompTime));
+            if (CompTime==0){//||CompTime<timerange*60*1000||CompTime>timerange*60*1000){
+                return "〇";
+            }else if(CompTime<timelate*60*1000) {
+                return "△";
+            }else if(CompTime<timeClass*60*1000){
+                return "×";
             }
         }
-         if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
-        if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
-            return ("○");
-        } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
-            return ("△");
-        } else {
-            return ("×");
-        }
-          }
-        Log.d("hantei", String.valueOf(ii));
-        Log.d("hantei", "notfound");
-           return "×";
+        return "";
+
     }
 }
