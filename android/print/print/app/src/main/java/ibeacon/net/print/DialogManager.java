@@ -11,7 +11,9 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nifty.cloud.mb.core.FindCallback;
@@ -27,7 +29,9 @@ import java.util.List;
 
 public class DialogManager {
     private Context context;
-    DialogManager(Context context){this.context=context;}
+    private ArrayAdapter<String> _adapter;
+    private ListView _listView = null;
+    DialogManager(Context context, ArrayAdapter<String> _adapter,ListView _listView){this.context=context;this._adapter=_adapter;this._listView=_listView;}
     SubActivity subActivity = new SubActivity();
 
     private ProgressDialog progressDialog;
@@ -261,8 +265,11 @@ public class DialogManager {
                                     for (int i = 0; i < objects.size(); i++) {
                                         NCMBObject o = objects.get(i);
                                         Log.d("Attend",o.getString("attend"));
-                                        subActivity.obj_print(1, o, pLessonName, pClassName+o.getString("attend"));
+                                        String returnText = subActivity.obj_print(1, o, pLessonName, pClassName+o.getString("attend"));
+                                        if(!returnText.equals("")){_adapter.add(returnText);}
+
                                     }
+                                    if(_adapter!=null)_listView.setAdapter(_adapter);//subActivity.setList(_adapter);
                                 }
                             }
                         });
