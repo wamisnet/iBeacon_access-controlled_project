@@ -33,13 +33,16 @@ public class MainActivity extends AppCompatActivity {
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
     int dcompST[] = {20, 19, 45, 02};
 
+    int syu_ato1[] = {15, 00, 15, 00};
+    int syu_mae[] = {15, 55, 15, 55};//添え字合わせをする為[0]と[2]はダミーデータ
+    int syu_ato2[] = {25, 05, 25, 05};
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        NCMB.initialize(this.getApplicationContext(),"fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
+        NCMB.initialize(this.getApplicationContext(), "fe8cc228956e2f26276c141ce824efb4810c9d711119dcd511e2cd8b39438913",
                 "481f20a51e4ad7d6536280acb04fa83b05023e67105110b36040a221b16f1682");
 
         findViewById(R.id.reload).setOnClickListener(new View.OnClickListener() {
@@ -68,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.custom_listview
         );
     }
-    private void pushProgress(){
+
+    private void pushProgress() {
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("教室を検索中");
@@ -78,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
         pushReload();
     }
-    private void pushReload(){
+
+    private void pushReload() {
         //TestClassを検索するためのNCMBQueryインスタンスを作成
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("Gakkyu");//AttendClass
         //データストアからデータを検索
@@ -86,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(List<NCMBObject> objects, NCMBException e) {
                 if (e != null) {
-                    Log.d("NCMBQuery", "err:"+String.valueOf(e));
+                    Log.d("NCMBQuery", "err:" + String.valueOf(e));
                     //検索失敗時の処理
                 } else {
-                    String[] name=new String[objects.size()];
-                    String[] id=new String[objects.size()];
+                    String[] name = new String[objects.size()];
+                    String[] id = new String[objects.size()];
                     for (int i = 0, n = objects.size(); i < n; i++) {
                         NCMBObject o = objects.get(i);
                         //Log.i("NCMB", o.getString("Gakkyu_name"));
@@ -99,12 +104,13 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     progressDialog.dismiss();
-                   showdDialog(name,id);
+                    showdDialog(name, id);
                 }
             }
         });
     }
-    private void showdDialog(final String[] items, final String[] id){
+
+    private void showdDialog(final String[] items, final String[] id) {
         int defaultItem = 0; // デフォルトでチェックされているアイテム
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
@@ -123,14 +129,15 @@ public class MainActivity extends AppCompatActivity {
                         if (!checkedItems.isEmpty()) {
                             Log.d("checkedItem:", "" + checkedItems.get(0));
                             Log.d("checkedItemSrect:", "" + id[checkedItems.get(0)]);
-                            setNowClass(id[checkedItems.get(0)],items[checkedItems.get(0)]);
+                            setNowClass(id[checkedItems.get(0)], items[checkedItems.get(0)]);
                         }
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-    private void setNowClass(String id, final String name){
+
+    private void setNowClass(String id, final String name) {
         final Calendar now = Calendar.getInstance(); //インスタンス化
         final TextView textView = (TextView) findViewById(R.id.textView);
         final SubActivity subA = new SubActivity();
@@ -158,29 +165,28 @@ public class MainActivity extends AppCompatActivity {
                         NCMBObject o = objects.get(i);
                         Log.i("NCMB", o.getString("attend") + ":" + o.getString("createDate"));
                         user = o.getString("attend");
-                        for(int l=1;l<=6;l++)
-                        Log.i("create getTime", String.valueOf(getTime(l,o.getString("createDate"))));
+                        for (int l = 1; l <= 6; l++)
+                            Log.i("create getTime", String.valueOf(getTime(l, o.getString("createDate"))));
                         if (!userName.equals(user)) {
                             userName = o.getString("attend");
                             int h = now.get(now.HOUR_OF_DAY);//時を取得
-                            for(ii = 0; ii < 4; ii++){
-                                Log.d("ループ",String.valueOf(h));
-                                if(dcompH[ii] <= h && h < dcompH[ii+1])
-                                {
+                            for (ii = 0; ii < 4; ii++) {
+                                Log.d("ループ", String.valueOf(h));
+                                if (compH[ii] <= h && h < compH[ii + 1]) {
                                     Log.d("break前ii", String.valueOf(ii));
                                     break;
                                 }
                             }
-                        //    adapter.add(name + o.getString("attend"));
+                            //    adapter.add(name + o.getString("attend"));
                             Log.d("break後ii", String.valueOf(ii));
-                            if(ii < 4){
+                            if (ii < 4) {
                                 textView.setText(String.valueOf(ii + 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             }
                           /*  if(ii == 4){
                                 textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             }*/
                             //出席判定
-                            adapter.add(name + o.getString("attend")+"               "+hantei(o));
+                            adapter.add(name + o.getString("attend") + "               " + hantei(o));
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
@@ -192,32 +198,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private int getTime(int mode, String createTime) {
-        int index,indexaf;
 
-        if(mode==1) {//year
+    private int getTime(int mode, String createTime) {
+        int index, indexaf;
+
+        if (mode == 1) {//year
             return Integer.parseInt(createTime.substring(0, 4));
         }
-        index=createTime.indexOf("-");
-        index=createTime.indexOf("-",index+1);
-        if(mode==2) {//mon
+        index = createTime.indexOf("-");
+        index = createTime.indexOf("-", index + 1);
+        if (mode == 2) {//mon
             return Integer.parseInt(createTime.substring(5, index));
         }
-        indexaf=createTime.indexOf("T",index+1);
+        indexaf = createTime.indexOf("T", index + 1);
         if (mode == 3) {//day
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
+            return Integer.parseInt(createTime.substring(index + 1, indexaf));
         }
-        index=createTime.indexOf(":",indexaf+1);
-        if(mode==4){//h
-            return Integer.parseInt(createTime.substring(indexaf+1, index))+9;
+        index = createTime.indexOf(":", indexaf + 1);
+        if (mode == 4) {//h
+            return Integer.parseInt(createTime.substring(indexaf + 1, index)) + 9;
         }
-        indexaf=createTime.indexOf(":",index+1);
-        if(mode==5){//m
-            return Integer.parseInt(createTime.substring(index+1, indexaf));
+        indexaf = createTime.indexOf(":", index + 1);
+        if (mode == 5) {//m
+            return Integer.parseInt(createTime.substring(index + 1, indexaf));
         }
-        index=createTime.indexOf(".",indexaf+1);
-        if(mode==6){//s
-            return Integer.parseInt(createTime.substring(indexaf+1, index));
+        index = createTime.indexOf(".", indexaf + 1);
+        if (mode == 6) {//s
+            return Integer.parseInt(createTime.substring(indexaf + 1, index));
         }
         return Integer.parseInt(createTime);
     }
@@ -230,22 +237,28 @@ public class MainActivity extends AppCompatActivity {
 
         for (ii = 0; ii < 4; ii++) {
             Log.d("ループ", String.valueOf(h));
-            if (dcompH[ii] <= h && h < dcompH[ii + 1]) {
+            if (compH[ii] <= h && h < compH[ii + 1]) {
                 Log.d("break前ii", String.valueOf(ii));
                 break;
             }
         }
-         if (getTime(4, o.getString("createDate")) == dcompH[ii]) {
-        if (getTime(5, o.getString("createDate")) > dcompST[ii] && (getTime(5, o.getString("createDate")) < dcompST[ii] + timerange)) {
-            return ("○");
-        } else if (getTime(5, o.getString("createDate")) >= (dcompST[ii] + timerange + timerange2)) {
-            return ("△");
-        } else {
-            return ("×");
+            //授業開始時間後からの出席判定
+        if (getTime(4, o.getString("createDate")) == compH[ii]) {
+            if (getTime(5, o.getString("createDate")) >= syu_ato1[ii] && (getTime(5, o.getString("createDate")) <= syu_ato2[ii])) {
+                return ("○");
+            } else if (getTime(5, o.getString("createDate")) < (syu_ato1[ii] + timerange2))//授業開始時間から15分までの範囲
+                return ("△");
+            //授業出席時間前からの出席判定(00分が授業開始時刻の場合)
+        } else if( (ii == 1) || (ii == 3) ){
+            if (getTime(5, o.getString("createDate")) >= syu_mae[ii]){
+                return  ("○");
+            } else {
+                return  ("×");
+            }
         }
-          }
+
         Log.d("hantei", String.valueOf(ii));
         Log.d("hantei", "notfound");
-           return "×";
+        return ("×");
     }
 }
