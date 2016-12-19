@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.MainActivity);
+        setContentView(R.layout.mainactivity);
         // Bluetoothの生成（ここは5.0以前と一緒）
         BluetoothManager manager=(BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
         final BluetoothAdapter bluetoothAdapter = manager.getAdapter();
