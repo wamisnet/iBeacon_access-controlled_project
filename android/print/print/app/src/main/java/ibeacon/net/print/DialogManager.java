@@ -115,7 +115,7 @@ public class DialogManager {
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
         new AlertDialog.Builder(context)
-                .setTitle("Teacher Selector")
+                .setTitle("Class Selector")
                 .setSingleChoiceItems(className, defaultItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -144,7 +144,7 @@ public class DialogManager {
         final List<Integer> checkedItems = new ArrayList<>();
         checkedItems.add(defaultItem);
         new AlertDialog.Builder(context)
-                .setTitle("Class Selector")
+                .setTitle("Teacher Selector")
                 .setSingleChoiceItems(className, defaultItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -265,9 +265,10 @@ public class DialogManager {
                                     for (int i = 0; i < objects.size(); i++) {
                                         NCMBObject o = objects.get(i);
                                         Log.d("Attend",o.getString("attend"));
-                                        String returnText = subActivity.obj_print(1, o, pLessonName, pClassName+o.getString("attend"));
-                                        if(!returnText.equals("")){_adapter.add(returnText);}
-
+                                        if(subActivity.week_judge(o) == true){
+                                            String returnText = subActivity.obj_print(1, o, pLessonName, pClassName+o.getString("attend"));
+                                            if(!returnText.equals("")){_adapter.add(returnText);}
+                                        }
                                     }
                                     if(_adapter!=null)_listView.setAdapter(_adapter);//subActivity.setList(_adapter);
                                 }

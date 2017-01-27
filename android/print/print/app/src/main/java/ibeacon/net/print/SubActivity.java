@@ -33,6 +33,8 @@ public class SubActivity extends AppCompatActivity {
     int tikoku_count = 0;
     int kesseki_count = 0;
     String userName = "";
+    String reach;
+    String out;
 
 
 
@@ -64,7 +66,21 @@ public class SubActivity extends AppCompatActivity {
     }
 
 
+    public  boolean week_judge(NCMBObject o){
+     Calendar calendar = Calendar.getInstance();
+     calendar.set(timerManager.getTime(1,o.getString("createDate")),timerManager.getTime(2,o.getString("createDate"))-1,timerManager.getTime(3,o.getString("createDate")));
+     Log.d("曜日", String.valueOf(calendar.get(Calendar.DAY_OF_WEEK)));
+     Log.d("日付", String.valueOf(calendar.get(Calendar.DATE)));
 
+     long millis1 = calendar.getTimeInMillis();
+     Log.d("みり", String.valueOf(millis1));
+        Log.d("week", o.getString("week"));
+     if(Integer.parseInt(o.getString("week"))==(int)calendar.get(Calendar.DAY_OF_WEEK)){
+        return  true;
+     }
+
+     return false;
+ }
 
 
     public String obj_print(int time, NCMBObject o, String kamoku, String name) {
@@ -75,28 +91,30 @@ public class SubActivity extends AppCompatActivity {
         int flag = 0;
 
         user = o.getString("attend");
-        if(!userName.equals(user)){
-            userName=user;
+        if(userName.equals(user)) {
+            userName = user;
 
-            flag += kesseki_count;
-            flag += tikoku_count / 3;
-
-            if (flag >= 3 && flag < 5) {
-                warn_flag = "15% 警告＆課題";
-            }else if (flag >= 5){
-                warn_flag = "25% 単位取得不可";
-            }
-            kesseki_count = 0;
-            tikoku_count = 0;
-            return (name + "       "
-                    +"欠席:"+kesseki_count+" "+"遅刻:"+tikoku_count+"　　　　" +
-                    ""+warn_flag);
-        }else {
-            //欠席遅刻回数カウント
-            if ((timerManager.Attend(o.getString("createDate"), time)) == "×") {
-                kesseki_count++;
-            } else if ((timerManager.Attend(o.getString("createDate"), time)) == "△") {
+            if(timerManager.hantei(o).equals("△")){
                 tikoku_count++;
+            }else if(timerManager.hantei(o).equals("×")){
+                kesseki_count++;
+            }
+            //欠席３回で１５％
+            //欠席５回で２５％
+            //遅刻３回で欠席１回
+
+            if(tikoku_count == 3){
+                kesseki_count++;
+                tikoku_count = 0;
+            }
+
+
+        }else{
+            if(kesseki_count >= 3 && kesseki_count < 5){
+
+                return userName+"15%";
+            }else{
+                return userName;
             }
         }
         return "";

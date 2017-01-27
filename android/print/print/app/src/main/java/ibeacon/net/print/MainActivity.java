@@ -26,15 +26,15 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     int compH[] = {9, 11, 13, 15};
-    int timerange = 10;
-    int timerange2 = 20;
+
     int compST[] = {20, 00, 20, 00};
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
     int dcompST[] = {20, 19, 45, 02};
 
     int syu_ato1[] = {15, 00, 15, 00};
-
+    int timerange = 10;
+    int timerange2 = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +51,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {// インテントの生成
-                Intent intent = new Intent(getApplication(), SubActivity.class);
-                intent.setClassName("ibeacon.net.print", "ibeacon.net.print.SubActivity");
-
-                // SubActivity の起動
-                startActivity(intent);
-
-            }
-
-        });
         // LayoutファイルのListViewのリソースID
         _listView = (ListView) findViewById(R.id.list_item);
         adapter = new ArrayAdapter<String>(getApplicationContext(),

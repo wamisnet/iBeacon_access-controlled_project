@@ -1,5 +1,7 @@
 package ibeacon.net.print;
 
+import android.util.Log;
+
 import com.nifty.cloud.mb.core.NCMBObject;
 
 import java.util.Calendar;
@@ -10,12 +12,14 @@ import java.util.Calendar;
 
 public class TimerManager {
     int compH[] = {9, 11, 13, 15};
-    int timerange = 5;
-    int timerange2 = 15;
     int compST[] = {20, 00, 20, 00};
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
     int dcompST[] = {00, 19, 45, 02};
+
+    int syu_ato1[] = {15, 00, 15, 00};
+    int timerange = 10;
+    int timerange2 = 20;
     public int getTime(int mode, String createTime) {
         int index, indexaf;
 
@@ -54,5 +58,33 @@ public class TimerManager {
         } else {
             return ("×");
         }
+    }
+
+    public String hantei(NCMBObject o)//出席判定
+    {
+        int ii;
+        Calendar now = Calendar.getInstance(); //インスタンス化
+        int h = now.get(now.HOUR_OF_DAY);//時を取得
+
+        for (ii = 0; ii < 4; ii++) {
+            Log.d("ループ", String.valueOf(h));
+            if (compH[ii] <= h && h < compH[ii + 1]) {
+                Log.d("break前ii", String.valueOf(ii));
+                break;
+            }
+        }
+        //授業開始時間後からの出席判定
+        if (getTime(4, o.getString("createDate")) == compH[ii]) {
+            if (getTime(5, o.getString("createDate")) >= syu_ato1[ii] && (getTime(5, o.getString("createDate")) <= syu_ato1[ii] + timerange)) {
+                return ("○");
+            } else if (getTime(5, o.getString("createDate")) < (syu_ato1[ii] + timerange2))//授業開始時間から15分までの範囲
+                return ("△");
+            //授業出席時間前からの出席判定(00分が授業開始時刻の場合)
+        } else {return  ("A");
+        }
+
+        Log.d("hantei", String.valueOf(ii));
+        Log.d("hantei", "notfound");
+        return ("×");
     }
 }
