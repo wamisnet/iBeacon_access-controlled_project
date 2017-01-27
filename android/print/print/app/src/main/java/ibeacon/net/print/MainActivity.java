@@ -26,16 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     int compH[] = {9, 11, 13, 15};
-    int timerange = 5;
-    int timerange2 = 15;
+    int timerange = 10;
+    int timerange2 = 20;
     int compST[] = {20, 00, 20, 00};
 
     int dcompH[] = {10, 12, 14, 16, 24}; //検証用
     int dcompST[] = {20, 19, 45, 02};
 
     int syu_ato1[] = {15, 00, 15, 00};
-    int syu_mae[] = {15, 55, 15, 55};//添え字合わせをする為[0]と[2]はダミーデータ
-    int syu_ato2[] = {25, 05, 25, 05};
 
 
     @Override
@@ -186,7 +184,11 @@ public class MainActivity extends AppCompatActivity {
                                 textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             }*/
                             //出席判定
-                            adapter.add(name + o.getString("attend") + "               " + hantei(o));
+                            if(!(hantei(o)).equals("A"))
+                            {
+                                adapter.add(name + o.getString("attend") + "               " + hantei(o));
+                            }
+
                         }
                         //id[i] = o.getString("Gakkyu_ID");
                         //name[i] = o.getString("Gakkyu_name");
@@ -244,17 +246,12 @@ public class MainActivity extends AppCompatActivity {
         }
             //授業開始時間後からの出席判定
         if (getTime(4, o.getString("createDate")) == compH[ii]) {
-            if (getTime(5, o.getString("createDate")) >= syu_ato1[ii] && (getTime(5, o.getString("createDate")) <= syu_ato2[ii])) {
+            if (getTime(5, o.getString("createDate")) >= syu_ato1[ii] && (getTime(5, o.getString("createDate")) <= syu_ato1[ii] + timerange)) {
                 return ("○");
             } else if (getTime(5, o.getString("createDate")) < (syu_ato1[ii] + timerange2))//授業開始時間から15分までの範囲
                 return ("△");
             //授業出席時間前からの出席判定(00分が授業開始時刻の場合)
-        } else if( (ii == 1) || (ii == 3) ){
-            if (getTime(5, o.getString("createDate")) >= syu_mae[ii]){
-                return  ("○");
-            } else {
-                return  ("×");
-            }
+        } else {return  ("A");
         }
 
         Log.d("hantei", String.valueOf(ii));
