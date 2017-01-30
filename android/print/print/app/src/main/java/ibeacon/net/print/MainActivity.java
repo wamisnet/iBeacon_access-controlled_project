@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView _listView = null;
     private ProgressDialog progressDialog;
 
-    int compH[] = {9, 11, 13, 15};
+    int compH[] = {9, 11, 13, 15, 16};
 
     int compST[] = {20, 00, 20, 00};
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         NCMBQuery<NCMBObject> query = new NCMBQuery<>("AttendClass");//AttendClass
         //データストアからデータを検索
         query.whereEqualTo("Gakkyu_ID", id);
-        query.addOrderByDescending("attend");
+        query.addOrderByAscending("attend");
         query.addOrderByDescending("createDate");
         query.findInBackground(new FindCallback<NCMBObject>() {
             @Override
@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                 textView.setText(String.valueOf(ii - 1) + "時限目の出席状況　○：出席　×：欠席　△：遅刻");
                             }*/
                             //出席判定
+                            Log.d("判定",hantei(o));
                             if(!(hantei(o)).equals("A"))
                             {
                                 adapter.add(name + o.getString("attend") + "               " + hantei(o));
@@ -224,7 +225,10 @@ public class MainActivity extends AppCompatActivity {
         int ii;
         Calendar now = Calendar.getInstance(); //インスタンス化
         int h = now.get(now.HOUR_OF_DAY);//時を取得
-
+        int d = now.get(now.DATE);//日にち
+        if(d != getTime(3 , o.getString("createDate"))){
+            return "A";
+        }
         for (ii = 0; ii < 4; ii++) {
             Log.d("ループ", String.valueOf(h));
             if (compH[ii] <= h && h < compH[ii + 1]) {
@@ -239,11 +243,12 @@ public class MainActivity extends AppCompatActivity {
             } else if (getTime(5, o.getString("createDate")) < (syu_ato1[ii] + timerange2))//授業開始時間から15分までの範囲
                 return ("△");
             //授業出席時間前からの出席判定(00分が授業開始時刻の場合)
-        } else {return  ("A");
-        }
+            } else {
 
         Log.d("hantei", String.valueOf(ii));
         Log.d("hantei", "notfound");
+        return ("×");
+        }
         return ("×");
     }
 }
